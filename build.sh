@@ -1,6 +1,8 @@
 #!/bin/sh
 
-export OTB_VERSION=0.8
+OTB_TAG=`git describe --tags --match='v[0-9].*' 2>/dev/null`
+
+export OTB_VERSION=${OTB_TAG#v}
 export OTB_BRANCH=master
 
 [ -d openwrt ] || \
@@ -17,7 +19,7 @@ cp config openwrt/.config
 
 cd openwrt
 
-echo $OTB_VERSION > version
+echo ${OTB_VERSION} > version
 
 cat > feeds.conf <<EOF
 src-git packages https://github.com/openwrt/packages.git
