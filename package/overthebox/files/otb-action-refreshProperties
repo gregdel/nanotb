@@ -1,0 +1,3 @@
+#!/bin/sh
+
+otb-properties | otb-call POST "devices/${OTB_DEVICE_ID}/properties" -d@-

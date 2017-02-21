@@ -1,0 +1,9 @@
+#!/bin/sh
+
+. /usr/share/libubox/jshn.sh
+
+json_load "$1"
+json_select arguments
+json_get_var delay delay
+
+exec sleep "${delay:-10}"

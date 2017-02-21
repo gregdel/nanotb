@@ -1,0 +1,11 @@
+#!/bin/sh
+
+method=$1
+path=$2
+shift 2
+
+exec curl -s -m 5 -k -X "${method}" \
+	"https://provisionning.overthebox.net:4443/${path}" \
+	-H "Content-Type: application/json" \
+	-H "X-Auth-OVH: ${OTB_TOKEN}" \
+	-H "X-Overthebox-Version: ${OTB_VERSION}" "$@"

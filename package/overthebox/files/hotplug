@@ -1,0 +1,22 @@
+#!/bin/sh
+
+exit 0
+
+. /etc/openwrt_release
+
+OTB_VERSION="${DISTRIB_REVISION}-0"
+OTB_DEVICE_ID=`uci -q get overthebox.me.device_id`
+OTB_TOKEN=`uci -q get overthebox.me.token`
+
+[ -n "${OTB_DEVICE_ID}" ] && otb-call POST "devices/${OTB_DEVICE_ID}/events" -d@- << EOF
+{
+    "event_name": "${ACTION}",
+    "timestamp": "`date +%s`",
+    "details": {
+        "interface": "${INTERFACE}",
+        "probe": "off",
+    }
+}
+EOF
+
+exit 0

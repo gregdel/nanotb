@@ -1,0 +1,32 @@
+#!/bin/sh
+
+. /lib/functions.sh
+. /lib/functions/network.sh
+. /usr/share/libubox/jshn.sh
+
+PERIOD=
+
+_add_interface() {
+	printf ${PERIOD}'{"ip":"'"$1"'","netmask":"'"$2"'","gateway":"'"$3"'","name":"'"$4"'","multipath_status":"'"$5"'"}'
+	PERIOD=,
+}
+
+_get_interface() {
+	local multipath device address mask
+	config_get multipath $1 multipath
+	json_cleanup
+	json_load "`ifstatus $1`"
+	json_get_var device device
+	json_select ipv4-address
+	json_select 1
+	json_get_var address address
+	json_get_var mask mask
+	_add_interface "${address:-none}" "${mask:-none}" "${gateway:-none}" "${device:-none}" "${multipath:-none}"
+}
+
+printf '{"interfaces":['
+
+config_load network
+config_foreach _get_interface interface
+
+printf '],"packages":[]}'

@@ -1,0 +1,10 @@
+#!/bin/sh
+
+set -e
+
+. /usr/share/libubox/jshn.sh
+
+json_load "`otb-call GET "devices/${OTB_DEVICE_ID}/service"`"
+json_get_var service service
+
+otb-call POST "devices/${OTB_DEVICE_ID}/service/${service}/confirm"

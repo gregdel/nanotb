@@ -1,0 +1,45 @@
+#!/bin/sh
+
+TS=`date +%s`
+HN=$1
+PERIOD=
+
+_add_bytes() {
+	printf ${PERIOD}'{"metric":"linux.net.bytes","timestamp":'"$TS"',"value":'"$1"',"tags":{"direction":"'"$2"'","host":"'"$HN"'","iface":"'"$3"'"}}'
+	PERIOD=,
+}
+
+_add_loadavg() {
+	printf ${PERIOD}'{"metric":"proc.loadavg.'"$1"'","timestamp":'"$TS"',"value":'"$2"',"tags":{"host":"'"$HN"'"}}'
+	PERIOD=,
+}
+
+_add_free() {
+	printf ${PERIOD}'{"metric":"os.mem.free","timestamp":'"$TS"',"value":'"$1"',"tags":{"host":"'"$HN"'"}}'
+	PERIOD=,
+}
+
+printf '['
+
+while read IFACE RX _ _ _ _ _ _ _ TX _ ; do
+	case "${IFACE}" in
+		*:)
+			_add_bytes "${RX}" 'in'  "${IFACE%:}"
+			_add_bytes "${TX}" 'out' "${IFACE%:}"
+			;;
+	esac
+done < /proc/net/dev
+
+read AVG1 _ _ < /proc/loadavg
+
+_add_loadavg '1m' "${AVG1}"
+
+while read NAME VALUE _ ; do
+	case "${NAME}" in
+		MemFree:)
+			_add_free "${VALUE}"
+			;;
+	esac
+done < /proc/meminfo
+
+printf ']'

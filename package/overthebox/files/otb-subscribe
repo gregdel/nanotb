@@ -1,0 +1,23 @@
+#!/bin/sh
+
+set -e
+
+[ -n "${OTB_TOKEN}" -a -n "${OTB_DEVICE_ID}" ] && exit
+
+. /lib/functions/network.sh
+. /usr/share/libubox/jshn.sh
+
+network_get_ipaddr lan_ip lan
+
+json_load "`otb-call POST subscribe -d'{ "private_ips": [ "'${lan_ip}'" ] }'`"
+json_get_var device_id device_id
+json_get_var token token
+
+uci -q batch << EOF
+set overthebox.me=config
+set overthebox.me.device_id="${device_id}"
+set overthebox.me.token="${token}"
+commit overthebox
+EOF
+
+exit 1
