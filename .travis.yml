@@ -11,11 +11,14 @@ addons:
     packages:
     - libxml-parser-perl
 script:
-- "travis_wait 60 ./build.sh"
+- "./build.sh"
 deploy:
   provider: releases
   api_key:
     secure: Q147oyO29aKcKsNYrtAxp4TzC86p53q0ZXYALYPnbXkxYZizyPNTstb+FQv5R4nlK2Q68oe68Mq8Z/+2mGuUl4uhcqVMV8Ag89aeBQ5PASPYgl8y7u2MxLBMnmrbABKFq1Id0DPj9n9+y/MUDRmrSNFi9vLkp99x2daBhIQ40MiqwyNtWyURoywDAG4A4GL2fpXyE7ASu3doUakcUexZrnaz7NBMeEC0yVlTa826I2GH0VbYiqwNuR+lSMtpMXhIP/vGt965AF4QSEm0WUG1Wc/z/ve1hmB9ewTx7/3CMUhhLaaXbhRNKCiMeYSRxEYlJWnh7KRV4Q0i8tYmRdAR/IXIhQeLAh6x1mWaIhhZ4uDLSzlSXMj4A8N60RnGr8rjAyll9fvUIIcNa4WjN1PabZAo02rk2Mln7Blu0bV5urFQPtETDnBbtZsB6OF//DmnQQt+4H90Jd2gp5a85Fz/8AvRM77rxK1qoYVZDoKZ+oBfP+IqjaXrzekM2ZEWLn02/nxFMzrphav+CorKPa8MpyAtNGMXFfsfZX2JL/QrSUFuYQu5twTfoTwOt3rmJ+ncF58q7ZmgdBzDslKRQ45lxPGL7oDHNUz++7tmbWUm4rCuui6CwtH68pJAdS4Z4AkfAc3vbsJxeegkyqH7s++NTsMVGsVsOXpbgXPctU9omJU=
-  file: ''
+  skip_cleanup: true
+  file_glob: true
+  file: openwrt/bin/*
   on:
+    tags: true
     repo: angt/nanotb

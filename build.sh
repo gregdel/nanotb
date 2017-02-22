@@ -22,4 +22,4 @@ touch openwrt/feeds.conf
 [ -f setup.sh ] && sh setup.sh
 
 make -C openwrt defconfig
-make -C openwrt -j"$(nproc)"
+make -C openwrt V=s -j"$(nproc)"
