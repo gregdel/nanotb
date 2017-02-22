@@ -3,14 +3,16 @@
 . /etc/openwrt_release
 . /usr/share/libubox/jshn.sh
 
-export OTB_VERSION="${DISTRIB_REVISION}-0"
-export OTB_DEVICE_ID=`uci -q get overthebox.me.device_id`
-export OTB_TOKEN=`uci -q get overthebox.me.token`
+OTB_VERSION=${DISTRIB_REVISION}-0
+OTB_DEVICE_ID=$(uci -q get overthebox.me.device_id)
+OTB_TOKEN=$(uci -q get overthebox.me.token)
+
+export OTB_VERSION OTB_DEVICE_ID OTB_TOKEN
 
 otb-subscribe || exit
 
 while sleep 1; do
-	ret=`otb-call GET "devices/${OTB_DEVICE_ID}/actions"`
+	ret=$(otb-call GET "devices/${OTB_DEVICE_ID}/actions")
 
 	json_load "${ret}"
 	json_get_var action action

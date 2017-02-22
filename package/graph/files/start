@@ -2,9 +2,9 @@
 
 logger -p daemon.info -t graph "$*"
 
-url=`uci -q get graph.$1.url`
-freq=`uci -q get graph.$1.freq`
-host=`uci -q get system.@system[0].hostname`
+url=$(uci -q get graph."$1".url)
+freq=$(uci -q get graph."$1".freq)
+host=$(uci -q get system.@system[0].hostname)
 
 [ -z "${url}" ] && exit 0
 

@@ -7,15 +7,14 @@
 PERIOD=
 
 _add_interface() {
-	printf ${PERIOD}'{"ip":"'"$1"'","netmask":"'"$2"'","gateway":"'"$3"'","name":"'"$4"'","multipath_status":"'"$5"'"}'
+	printf ${PERIOD}'{"ip":"%s","netmask":"%s","gateway":"%s","name":"%s","multipath_status":"%s"}' "$@"
 	PERIOD=,
 }
 
 _get_interface() {
-	local multipath device address mask
-	config_get multipath $1 multipath
+	config_get multipath "$1" multipath
 	json_cleanup
-	json_load "`ifstatus $1`"
+	json_load "$(ifstatus "$1")"
 	json_get_var device device
 	json_select ipv4-address
 	json_select 1

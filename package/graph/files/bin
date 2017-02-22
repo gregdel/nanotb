@@ -1,6 +1,6 @@
 #!/bin/sh
 
-TS=`date +%s`
+TS=$(date +%s)
 HN=$1
 PERIOD=
 
@@ -21,7 +21,7 @@ _add_free() {
 
 printf '['
 
-while read IFACE RX _ _ _ _ _ _ _ TX _ ; do
+while read -r IFACE RX _ _ _ _ _ _ _ TX _ ; do
 	case "${IFACE}" in
 		*:)
 			_add_bytes "${RX}" 'in'  "${IFACE%:}"
@@ -30,11 +30,11 @@ while read IFACE RX _ _ _ _ _ _ _ TX _ ; do
 	esac
 done < /proc/net/dev
 
-read AVG1 _ _ < /proc/loadavg
+read -r AVG1 _ _ < /proc/loadavg
 
 _add_loadavg '1m' "${AVG1}"
 
-while read NAME VALUE _ ; do
+while read -r NAME VALUE _ ; do
 	case "${NAME}" in
 		MemFree:)
 			_add_free "${VALUE}"

@@ -4,7 +4,7 @@ set -e
 
 . /usr/share/libubox/jshn.sh
 
-json_load "`otb-call GET "devices/${OTB_DEVICE_ID}/config"`"
+json_load "$(otb-call GET "devices/${OTB_DEVICE_ID}/config")"
 
 json_select glorytun_mud_conf
 json_get_var gt_dev dev

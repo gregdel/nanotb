@@ -10,9 +10,11 @@ _info() {
 BIND_ARGS=
 
 _bind_args() {
-	config_get multipath $1 multipath
-	if [ "${multipath}" = "on" -o "${multipath}" = "master" ]; then
-		network_get_ipaddr ipaddr $1
+	multipath=off
+	ipaddr=
+	config_get multipath "$1" multipath
+	if [ "${multipath}" = "on" ] || [ "${multipath}" = "master" ]; then
+		network_get_ipaddr ipaddr "$1"
 		if [ -n "${ipaddr}" ]; then
 			_info "add interface $1"
 			BIND_ARGS="${BIND_ARGS}${ipaddr},"
@@ -25,12 +27,12 @@ _info "starting instance $1"
 config_load network
 config_foreach _bind_args interface
 
-uci -q get glorytun.$1.key > "/tmp/glorytun.key"
+uci -q get glorytun."$1".key > "/tmp/glorytun.key"
 
-dev=`uci -q get glorytun.$1.dev`
-host=`uci -q get glorytun.$1.host`
-port=`uci -q get glorytun.$1.port`
-mtu=`uci -q get glorytun.$1.mtu`
+dev=$(uci -q get glorytun."$1".dev)
+host=$(uci -q get glorytun."$1".host)
+port=$(uci -q get glorytun."$1".port)
+mtu=$(uci -q get glorytun."$1".mtu)
 
 exec glorytun \
 	keyfile "/tmp/glorytun.key" \
