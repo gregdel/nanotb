@@ -2,7 +2,8 @@
 
 set -e
 
-OTB_VERSION=0.8
+OTB_TAG=$(git describe --tags --match='v[0-9].*' 2>/dev/null)
+OTB_VERSION=${OTB_TAG#v}
 OTB_BRANCH=master
 
 [ -d openwrt ] || \
@@ -22,4 +23,4 @@ touch openwrt/feeds.conf
 [ -f setup.sh ] && sh setup.sh
 
 make -C openwrt defconfig
-make -C openwrt -j"$(nproc)"
+make -C openwrt V=w -j"$(nproc)"
