@@ -2,7 +2,10 @@ sudo: false
 dist: trusty
 language: c
 compiler: gcc
-cache: ccache
+cache:
+  ccache: true
+  directories:
+  - dl
 addons:
   apt:
     packages:

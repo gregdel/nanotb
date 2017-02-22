@@ -11,26 +11,15 @@ OTB_BRANCH=master
 rsync -avh files/ openwrt/files/
 rsync -avh package/ openwrt/package/otb/
 
-[ -d ~/dl ] && rsync -avh ~/dl/ openwrt/dl/
+cat > openwrt/.config <<EOF
+$(cat config)
+CONFIG_DOWNLOAD_FOLDER="$(pwd)/dl"
+EOF
 
-cp config openwrt/.config
+echo "${OTB_VERSION}" > openwrt/version
+touch openwrt/feeds.conf
 
 [ -f setup.sh ] && sh setup.sh
 
-(
-	cd openwrt
-
-	echo "${OTB_VERSION}" > version
-
-	cat > feeds.conf <<-EOF
-	#src-git packages https://github.com/openwrt/packages.git
-	EOF
-
-	#./scripts/feeds update -a
-	#./scripts/feeds install -p packages sqm-scripts sqm-scripts-extra
-
-	make defconfig
-	make -j"$(nproc)"
-)
-
-[ -d ~/dl ] && rsync -avh openwrt/dl/ ~/dl/
+make -C openwrt defconfig
+make -C openwrt -j"$(nproc)"
