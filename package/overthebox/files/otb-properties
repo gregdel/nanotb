@@ -12,15 +12,27 @@ _add_interface() {
 }
 
 _get_interface() {
-	config_get multipath "$1" multipath
 	json_cleanup
 	json_load "$(ifstatus "$1")"
+
 	json_get_var device device
-	json_select ipv4-address
-	json_select 1
-	json_get_var address address
-	json_get_var mask mask
-	_add_interface "${address:-none}" "${mask:-none}" "${gateway:-none}" "${device:-none}" "${multipath:-none}"
+
+	if json_select ipv4-address && json_select 1 >/dev/null; then
+		json_get_var address address
+		json_get_var mask mask
+		json_select ..
+		json_select ..
+	fi
+
+	if json_select route && json_select 1 >/dev/null; then
+		json_get_var gateway target
+		json_select ..
+		json_select ..
+	fi
+
+	config_get multipath "$1" multipath
+
+	_add_interface "${address}" "${mask}" "${gateway}" "${device}" "${multipath}"
 }
 
 printf '{"interfaces":['
