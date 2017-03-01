@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=graph
-PKG_VERSION:=0.0.0
+PKG_VERSION:=0.1
 PKG_RELEASE:=0
 
 include $(INCLUDE_DIR)/package.mk
@@ -33,7 +33,6 @@ endef
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/bin
 	$(INSTALL_BIN) ./files/bin $(1)/bin/$(PKG_NAME)
-	$(INSTALL_BIN) ./files/start $(1)/bin/$(PKG_NAME)-start
 	$(INSTALL_DIR) $(1)/etc/config
 	$(INSTALL_DATA) ./files/config $(1)/etc/config/$(PKG_NAME)
 	$(INSTALL_DIR) $(1)/etc/init.d
