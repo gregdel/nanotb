@@ -13,6 +13,7 @@ rsync -avh package/ openwrt/package/otb/
 
 cat > openwrt/.config <<EOF
 $(cat config)
+CONFIG_DEVEL=y
 CONFIG_DOWNLOAD_FOLDER="$(pwd)/dl"
 EOF
 
