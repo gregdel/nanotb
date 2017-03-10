@@ -11,8 +11,10 @@ export OTB_VERSION OTB_DEVICE_ID OTB_TOKEN
 
 otb-subscribe || exit
 
-while sleep 1; do
+while true; do
 	ret=$(otb-call GET "devices/${OTB_DEVICE_ID}/actions")
+
+	[ -n "${ret}" ] || exit
 
 	json_load "${ret}"
 	json_get_var action action
