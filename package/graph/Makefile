@@ -17,12 +17,6 @@ define Package/$(PKG_NAME)/description
 OpenTSDB daemon
 endef
 
-define Build/Prepare
-endef
-
-define Build/Configure
-endef
-
 define Build/Compile
 endef
 

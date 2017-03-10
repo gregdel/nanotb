@@ -18,12 +18,6 @@ define Package/$(PKG_NAME)/description
 The OverTheBox daemon
 endef
 
-define Build/Prepare
-endef
-
-define Build/Configure
-endef
-
 define Build/Compile
 endef
 
