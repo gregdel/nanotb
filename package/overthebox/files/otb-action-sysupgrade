@@ -1,0 +1,5 @@
+#!/bin/sh
+
+file=openwrt-x86-64-combined-squashfs.img.gz
+
+curl "http://downloads.overthebox.ovh/develop/x86/64/${file}" -o "/tmp/${file}" && sysupgrade "/tmp/${file}"
