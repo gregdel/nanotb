@@ -15,6 +15,7 @@ cat > openwrt/.config <<EOF
 $(cat config)
 CONFIG_DEVEL=y
 CONFIG_DOWNLOAD_FOLDER="$(pwd)/dl"
+CONFIG_PACKAGE_remote=y
 EOF
 
 echo "${OTB_VERSION}" > openwrt/version

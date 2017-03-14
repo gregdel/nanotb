@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+
+. /usr/share/libubox/jshn.sh
+json_load "$1"
+json_select arguments || return
+json_get_var remote_access_id remote_access_id
+
+id=$(echo "${remote_access_id}" | tr - _)
+
+uci -q batch <<EOF
+delete remote.${id}
+commit remote
+EOF
+
+reload_config

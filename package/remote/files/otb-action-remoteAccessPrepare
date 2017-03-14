@@ -1,0 +1,16 @@
+#!/bin/sh
+
+set -e
+
+. /usr/share/libubox/jshn.sh
+
+json_load "$1"
+json_select arguments || return
+json_get_var remote_access_id remote_access_id
+
+[ -s /etc/dropbear/dropbear_rsa_host_key ] || exit
+
+pubkey=$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | grep ssh-rsa)
+
+otb-call POST "devices/${OTB_DEVICE_ID}/remote_accesses/${remote_access_id}/keys" \
+	-d'{"public_key":"'"${pubkey}"'"}'
