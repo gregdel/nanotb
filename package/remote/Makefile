@@ -26,11 +26,11 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/bin
-	$(INSTALL_BIN) ./files/otb-* $(1)/bin
-	$(INSTALL_DIR) $(1)/etc/config
-	$(INSTALL_DATA) ./files/config $(1)/etc/config/$(PKG_NAME)
+	$(INSTALL_BIN) otb-* $(1)/bin
 	$(INSTALL_DIR) $(1)/etc/init.d
-	$(INSTALL_BIN) ./files/init $(1)/etc/init.d/$(PKG_NAME)
+	$(INSTALL_BIN) init $(1)/etc/init.d/$(PKG_NAME)
+	$(INSTALL_DIR) $(1)/etc/config
+	touch $(1)/etc/config/$(PKG_NAME)
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
