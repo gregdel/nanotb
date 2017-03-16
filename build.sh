@@ -30,4 +30,5 @@ touch openwrt/feeds.conf
 [ -f setup.sh ] && sh setup.sh
 
 make -C openwrt defconfig
+make -C openwrt clean
 make -C openwrt V=w -j"$(nproc)"
