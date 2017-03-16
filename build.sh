@@ -15,6 +15,9 @@ cat > openwrt/.config <<EOF
 $(cat config)
 CONFIG_DEVEL=y
 CONFIG_DOWNLOAD_FOLDER="$(pwd)/dl"
+CONFIG_IMAGEOPT=y
+CONFIG_VERSIONOPT=y
+CONFIG_VERSION_DIST="nanOTB"
 CONFIG_PACKAGE_remote=y
 CONFIG_PACKAGE_ca-bundle=y
 CONFIG_PACKAGE_ca-certificates=y
