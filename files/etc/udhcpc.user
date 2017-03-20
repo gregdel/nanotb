@@ -1,0 +1,29 @@
+#!/bin/sh
+
+[ -n "$interface" ] || exit
+
+case "$1" in
+	renew|bound)
+		;;
+	*)
+		exit 0
+		;;
+esac
+
+touch /etc/config/dhcpdiscovery
+
+uci -q batch << EOF
+set dhcpdiscovery.$interface=lease
+set dhcpdiscovery.$interface.timestamp=$(date +%s)
+set dhcpdiscovery.$interface.lease=$lease
+set dhcpdiscovery.$interface.ip=$ip
+set dhcpdiscovery.$interface.subnet=$subnet
+set dhcpdiscovery.$interface.timezone=$timezone
+set dhcpdiscovery.$interface.router=$router
+set dhcpdiscovery.$interface.hostname=$hostname
+set dhcpdiscovery.$interface.domain=$domain
+set dhcpdiscovery.$interface.ipttl=$ipttl
+set dhcpdiscovery.$interface.mtu=$mtu
+set dhcpdiscovery.$interface.broadcast=$broadcast
+commit dhcpdiscovery
+EOF
