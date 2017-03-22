@@ -10,20 +10,31 @@ case "$1" in
 		;;
 esac
 
-touch /etc/config/dhcpdiscovery
+IF=1
+while uci -q get network.if$IF; do
+	[ "$(uci -q get network.if$IF.gateway)" = "$router" ] && exit 0
+	IF=$((IF + 1))
+done
+
+WAN_MAC=$(uci -q get network.wan.macaddr)
 
 uci -q batch << EOF
-set dhcpdiscovery.$interface=lease
-set dhcpdiscovery.$interface.timestamp=$(date +%s)
-set dhcpdiscovery.$interface.lease=$lease
-set dhcpdiscovery.$interface.ip=$ip
-set dhcpdiscovery.$interface.subnet=$subnet
-set dhcpdiscovery.$interface.timezone=$timezone
-set dhcpdiscovery.$interface.router=$router
-set dhcpdiscovery.$interface.hostname=$hostname
-set dhcpdiscovery.$interface.domain=$domain
-set dhcpdiscovery.$interface.ipttl=$ipttl
-set dhcpdiscovery.$interface.mtu=$mtu
-set dhcpdiscovery.$interface.broadcast=$broadcast
-commit dhcpdiscovery
+set network.if$IF=interface
+set network.if$IF.ifname=$interface.$IF
+set network.if$IF.interface=$interface
+set network.if$IF.proto=static
+set network.if$IF.ipaddr=$ip
+set network.if$IF.netmask=${subnet:-255.255.255.0}
+set network.if$IF.gateway=$router
+set network.if$IF.dns=$dns
+set network.if$IF.metric=$IF
+set network.if$IF.multipath=on
+
+set network.wan.macaddr=$(printf 42:42:AB:CD:EF:%02X "$IF")
+set network.if$IF.macaddr=$WAN_MAC
+
+commit network
 EOF
+
+ifup if$IF
+ifup wan

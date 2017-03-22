@@ -5,13 +5,13 @@ set -e
 OTB_VERSION=0.8
 OTB_BRANCH=master
 
-[ -d openwrt ] || \
-	git clone --depth=1 https://github.com/openwrt/openwrt --branch ${OTB_BRANCH}
+[ -d build ] || \
+	git clone --depth=1 https://git.lede-project.org/source.git --branch ${OTB_BRANCH} build
 
-rsync -avh files/ openwrt/files/
-rsync -avh package/ openwrt/package/otb/
+rsync -avh files/ build/files/
+rsync -avh package/ build/package/otb/
 
-cat > openwrt/.config <<EOF
+cat > build/.config <<EOF
 $(cat config)
 CONFIG_DEVEL=y
 CONFIG_DOWNLOAD_FOLDER="$(pwd)/dl"
@@ -24,11 +24,14 @@ CONFIG_PACKAGE_ca-certificates=y
 CONFIG_PACKAGE_overthebox=y
 EOF
 
-echo "${OTB_VERSION}" > openwrt/version
-touch openwrt/feeds.conf
+echo "${OTB_VERSION}" > build/version
+touch build/feeds.conf
 
 [ -f setup.sh ] && sh setup.sh
 
-make -C openwrt defconfig
-make -C openwrt clean
-make -C openwrt V=w -j"$(nproc)"
+(
+	cd build
+	make defconfig
+	make clean
+	make V=w -j"$(nproc)"
+)

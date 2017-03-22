@@ -1,21 +1,32 @@
-config interface 'loopback'
-    option ifname    'lo'
-    option proto     'static'
-    option ipaddr    '127.0.0.1'
-    option netmask   '255.0.0.0'
-    option multipath 'off'
+config globals globals
+    option ula_prefix  auto
+    option multipath   off
 
-config interface 'lan'
-    option ifname    'eth0'
-    option proto     'dhcp'
-    option multipath 'on'
+config interface loopback
+    option ifname   lo
+    option proto    static
+    option ipaddr   127.0.0.1
+    option netmask  255.0.0.0
 
-config interface 'mud'
-    option ifname     'tun0'
-    option proto      'static'
-    option ipaddr     '10.166.179.2'
-    option gateway    '10.166.179.1'
-    option ip4table   'vpn'
-    option netmask    '255.255.255.0'
-    option multipath  'off'
-    option txqueuelen '1000'
+config interface wan
+    option ifname   eth0
+    option proto    dhcp
+    option macaddr  42:42:AB:CD:EF:00
+
+config interface lan
+    option ifname     eth0.0
+    option interface  eth0
+    option proto      static
+    option ipaddr     192.168.100.1
+    option netmask    255.255.255.0
+    option macaddr    42:42:AB:CD:00:00
+    option ip6assign  60
+
+config interface mud
+    option ifname      tun0
+    option proto       static
+    option ipaddr      10.166.179.2
+    option gateway     10.166.179.1
+    option netmask     255.255.255.0
+    option ip4table    vpn
+    option txqueuelen  1000
