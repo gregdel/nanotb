@@ -1,6 +1,6 @@
 include $(TOPDIR)/rules.mk
 
-PKG_NAME:=remote
+PKG_NAME:=otb-remote
 PKG_VERSION:=0.1
 PKG_RELEASE:=0
 
@@ -10,11 +10,11 @@ define Package/$(PKG_NAME)
 SECTION:=base
 CATEGORY:=Base system
 DEPENDS:=+dropbear +overthebox
-TITLE:=OverTheBox remote access
+TITLE:=OverTheBox otb-remote
 endef
 
 define Package/$(PKG_NAME)/description
-OverTheBox remote access daemon
+OverTheBox otb-remote
 endef
 
 define Build/Compile
