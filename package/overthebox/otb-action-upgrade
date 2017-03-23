@@ -1,0 +1,6 @@
+#!/bin/sh
+
+set -e
+
+opkg update
+opkg list-upgradable | cut -d' ' -f1 | grep -v Multiple | xargs opkg upgrade
