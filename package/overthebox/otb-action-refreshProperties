@@ -1,3 +1,48 @@
 #!/bin/sh
 
-otb-properties | otb-call POST "devices/${OTB_DEVICE_ID}/properties" -d@-
+. /lib/functions.sh
+. /lib/functions/network.sh
+. /usr/share/libubox/jshn.sh
+
+PERIOD=
+
+_add_interface() {
+	printf ${PERIOD}'{"ip":"%s","netmask":"%s","gateway":"%s","name":"%s","multipath_status":"%s"}' "$@"
+	PERIOD=,
+}
+
+_get_interface() {
+	json_cleanup
+	json_load "$(ifstatus "$1")"
+
+	json_get_var device device
+
+	if json_select ipv4-address && json_select 1 >/dev/null; then
+		json_get_var address address
+		json_get_var mask mask
+		json_select ..
+		json_select ..
+	fi
+
+	if json_select route && json_select 1 >/dev/null; then
+		json_get_var gateway target
+		json_select ..
+		json_select ..
+	fi
+
+	config_get multipath "$1" multipath
+
+	_add_interface "${address}" "${mask}" "${gateway}" "${device}" "${multipath}"
+}
+
+_properties() {
+	printf '{"interfaces":['
+
+	config_load network
+	config_foreach _get_interface interface
+
+	printf '],"packages":[]}'
+}
+
+_properties | otb-call POST "devices/${OTB_DEVICE_ID}/properties" \
+	-d@- -o /dev/null

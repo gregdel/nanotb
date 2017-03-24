@@ -13,4 +13,5 @@ json_get_var remote_access_id remote_access_id
 pubkey=$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | grep ssh-rsa)
 
 otb-call POST "devices/${OTB_DEVICE_ID}/remote_accesses/${remote_access_id}/keys" \
-	-d'{"public_key":"'"${pubkey}"'"}'
+	-d '{"public_key":"'"${pubkey}"'"}' \
+	-o /dev/null

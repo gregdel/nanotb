@@ -13,8 +13,8 @@ PKG_SOURCE:=$(PKG_NAME)-$(PKG_VERSION)-$(PKG_SOURCE_VERSION).tar.gz
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-SECTION:=net
-CATEGORY:=Network
+SECTION:=OVH
+CATEGORY:=OverTheBox
 TITLE:=HTrack
 URL:=https://github.com/angt/htrack
 endef

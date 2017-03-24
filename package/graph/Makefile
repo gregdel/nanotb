@@ -1,14 +1,14 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=graph
-PKG_VERSION:=0.1
+PKG_VERSION:=0.2
 PKG_RELEASE:=0
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-SECTION:=base
-CATEGORY:=Base system
+SECTION:=OVH
+CATEGORY:=OverTheBox
 DEPENDS:=+curl
 TITLE:=OpenTSDB Graph
 endef

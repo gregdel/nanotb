@@ -24,5 +24,7 @@ while true; do
 		otb-action-"${action}" "${ret}" && status="done" || status="error"
 
 	[ -n "${id}" ] && \
-		otb-call POST "devices/${OTB_DEVICE_ID}/actions/${id}" -d'{ "status": "'${status}'" }'
+		otb-call POST "devices/${OTB_DEVICE_ID}/actions/${id}" \
+			-d'{ "status": "'${status}'" }' \
+			-o /dev/null
 done

@@ -1,21 +1,21 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=overthebox
-PKG_VERSION:=0.0.0
+PKG_VERSION:=0.1
 PKG_RELEASE:=0
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-SECTION:=base
-CATEGORY:=Base system
+SECTION:=OVH
+CATEGORY:=OverTheBox
 DEPENDS:=+glorytun +graph +curl
 TITLE:=OverTheBox
 URL:=https://www.ovhtelecom.fr/overthebox/
 endef
 
 define Package/$(PKG_NAME)/description
-The OverTheBox daemon
+OverTheBox daemon
 endef
 
 define Build/Compile

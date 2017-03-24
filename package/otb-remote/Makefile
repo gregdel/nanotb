@@ -1,20 +1,20 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=otb-remote
-PKG_VERSION:=0.1
+PKG_VERSION:=0.2
 PKG_RELEASE:=0
 
 include $(INCLUDE_DIR)/package.mk
 
 define Package/$(PKG_NAME)
-SECTION:=base
-CATEGORY:=Base system
+SECTION:=OVH
+CATEGORY:=OverTheBox
 DEPENDS:=+dropbear +overthebox
-TITLE:=OverTheBox otb-remote
+TITLE:=OverTheBox remote
 endef
 
 define Package/$(PKG_NAME)/description
-OverTheBox otb-remote
+OverTheBox remote
 endef
 
 define Build/Compile

@@ -42,4 +42,4 @@ _graph() {
 	printf ']'
 }
 
-_graph | curl -sS -m 10 -k -X POST "${URL}" -H "Content-Type: application/json" -d@-
+_graph | curl -sS -m 10 -X POST "${URL}" -H "Content-Type: application/json" -d@-
