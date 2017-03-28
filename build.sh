@@ -13,7 +13,6 @@ rsync -avh files/ build/files/
 rsync -avh package/ build/package/otb/
 
 cat > build/.config <<EOF
-$(cat config)
 CONFIG_DEVEL=y
 CONFIG_DOWNLOAD_FOLDER="$(pwd)/dl"
 CONFIG_IMAGEOPT=y
@@ -23,6 +22,8 @@ CONFIG_VERSION_REPO="${OTB_REPO}"
 CONFIG_PACKAGE_otb-meta=y
 EOF
 
+[ -f config ] && cat config >> build/.config
+
 echo "${OTB_VERSION}" > build/version
 touch build/feeds.conf
 
@@ -30,7 +31,12 @@ touch build/feeds.conf
 
 (
 	cd build
+
 	make defconfig
 	make clean
 	make V=w -j"$(nproc)"
+
+	find bin -name '*.img*' -exec ./staging_dir/host/bin/usign -S -m {} -s key-build \;
+	find bin -name '*combined*.img.gz'     -execdir ln -sf {} latest.img.gz     \;
+	find bin -name '*combined*.img.gz.sig' -execdir ln -sf {} latest.img.gz.sig \;
 )
