@@ -11,6 +11,7 @@ SECTION:=OVH
 CATEGORY:=OverTheBox
 DEPENDS:=+dropbear +overthebox
 TITLE:=OverTheBox remote
+PKGARCH:=all
 endef
 
 define Package/$(PKG_NAME)/description

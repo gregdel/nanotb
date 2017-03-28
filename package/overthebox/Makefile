@@ -12,6 +12,7 @@ CATEGORY:=OverTheBox
 DEPENDS:=+glorytun +graph +curl +ca-bundle
 TITLE:=OverTheBox
 URL:=https://www.ovhtelecom.fr/overthebox/
+PKGARCH:=all
 endef
 
 define Package/$(PKG_NAME)/description

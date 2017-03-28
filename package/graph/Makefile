@@ -11,6 +11,7 @@ SECTION:=OVH
 CATEGORY:=OverTheBox
 DEPENDS:=+curl +ca-bundle
 TITLE:=OpenTSDB Graph
+PKGARCH:=all
 endef
 
 define Package/$(PKG_NAME)/description

@@ -11,6 +11,7 @@ SECTION:=OVH
 CATEGORY:=OverTheBox
 DEPENDS:=+otb-remote +overthebox
 TITLE:=OverTheBox meta
+PKGARCH:=all
 endef
 
 define Package/$(PKG_NAME)/description
