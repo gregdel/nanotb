@@ -9,7 +9,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 SECTION:=OVH
 CATEGORY:=OverTheBox
-DEPENDS:=+curl
+DEPENDS:=+curl +ca-bundle
 TITLE:=OpenTSDB Graph
 endef
 

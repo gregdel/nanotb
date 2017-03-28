@@ -20,6 +20,10 @@ CONFIG_VERSIONOPT=y
 CONFIG_VERSION_DIST="nanOTB"
 CONFIG_VERSION_REPO="${OTB_REPO}"
 CONFIG_PACKAGE_otb-meta=y
+CONFIG_PACKAGE_iperf3=m
+CONFIG_PACKAGE_strace=m
+CONFIG_PACKAGE_tc=m
+CONFIG_PACKAGE_tcpdump-mini=m
 EOF
 
 [ -f config ] && cat config >> build/.config

@@ -9,7 +9,7 @@ include $(INCLUDE_DIR)/package.mk
 define Package/$(PKG_NAME)
 SECTION:=OVH
 CATEGORY:=OverTheBox
-DEPENDS:=+glorytun +graph +curl
+DEPENDS:=+glorytun +graph +curl +ca-bundle
 TITLE:=OverTheBox
 URL:=https://www.ovhtelecom.fr/overthebox/
 endef
