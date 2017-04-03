@@ -8,4 +8,4 @@ exec curl -sS -m 5 -X "${method}" \
 	"https://provisionning.overthebox.net:4443/${path}" \
 	-H "Content-Type: application/json" \
 	-H "X-Auth-OVH: ${OTB_TOKEN}" \
-	-H "X-Overthebox-Version: ${OTB_VERSION}" "$@"
+	-H "X-Overthebox-Version: $(cat /etc/otb-version || echo 0.0-0)" "$@"

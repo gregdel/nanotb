@@ -1,13 +1,11 @@
 #!/bin/sh
 
-. /etc/openwrt_release
 . /usr/share/libubox/jshn.sh
 
-OTB_VERSION=${DISTRIB_REVISION}-0
 OTB_DEVICE_ID=$(uci -q get overthebox.me.device_id)
 OTB_TOKEN=$(uci -q get overthebox.me.token)
 
-export OTB_VERSION OTB_DEVICE_ID OTB_TOKEN
+export OTB_DEVICE_ID OTB_TOKEN
 
 otb-subscribe || exit
 
