@@ -6,7 +6,7 @@ STOP=10
 USE_PROCD=1
 
 validate_section() {
-	uci_validate_section remote remote "$1" \
+	uci_validate_section otb-remote remote "$1" \
 		'enable:bool:1'            \
 		'host:host'                \
 		'port:port'                \
@@ -27,10 +27,10 @@ start_instance() {
 }
 
 start_service() {
-	config_load remote
+	config_load otb-remote
 	config_foreach start_instance remote
 }
 
 service_triggers() {
-	procd_add_reload_trigger remote network
+	procd_add_reload_trigger otb-remote network
 }

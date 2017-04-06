@@ -16,13 +16,13 @@ json_get_var remote_access_id remote_access_id
 id=$(echo "${remote_access_id}" | tr - _)
 
 uci -q batch <<EOF
-set remote.${id}=remote
-set remote.${id}.host=${host}
-set remote.${id}.port=${port}
-set remote.${id}.forwarded_port=${forwarded_port}
-set remote.${id}.server_public_key="${server_public_key}"
-set remote.${id}.remote_public_key="${remote_public_key}"
-commit remote
+set otb-remote.${id}=remote
+set otb-remote.${id}.host='${host}'
+set otb-remote.${id}.port='${port}'
+set otb-remote.${id}.forwarded_port='${forwarded_port}'
+set otb-remote.${id}.server_public_key='${server_public_key}'
+set otb-remote.${id}.remote_public_key='${remote_public_key}'
+commit otb-remote
 EOF
 
 _add_key() { # key file

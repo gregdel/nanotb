@@ -10,8 +10,8 @@ json_get_var remote_access_id remote_access_id
 id=$(echo "${remote_access_id}" | tr - _)
 
 uci -q batch <<EOF
-delete remote.${id}
-commit remote
+delete otb-remote.${id}
+commit otb-remote
 EOF
 
 reload_config
