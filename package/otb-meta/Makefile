@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=otb-meta
-PKG_VERSION:=1.0
+PKG_VERSION:=1.2
 PKG_RELEASE:=0
 
 include $(INCLUDE_DIR)/package.mk
@@ -23,7 +23,7 @@ endef
 
 define Package/$(PKG_NAME)/install
 	$(INSTALL_DIR) $(1)/etc
-	echo "$(PKG_VERSION)-$(PKG_RELEASE)" > $(1)/etc/otb-version
+	echo "$(PKG_VERSION)-$(PKG_RELEASE)+nanotb" > $(1)/etc/otb-version
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))
