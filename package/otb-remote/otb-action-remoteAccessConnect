@@ -25,14 +25,4 @@ set otb-remote.${id}.remote_public_key='${remote_public_key}'
 commit otb-remote
 EOF
 
-_add_key() { # key file
-	[ -n "$1" ] || return
-	mkdir -p "$(dirname "$2")"
-	grep -q "$1" "$2" || echo "$1" >> "$2"
-	chmod 0600 "$2"
-}
-
-#_add_key "${host} ${server_public_key% *}" /root/.ssh/known_hosts
-_add_key "${remote_public_key}" /etc/dropbear/authorized_keys
-
 reload_config

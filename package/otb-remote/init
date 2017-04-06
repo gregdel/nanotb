@@ -10,7 +10,16 @@ validate_section() {
 		'enable:bool:1'            \
 		'host:host'                \
 		'port:port'                \
-		'forwarded_port:port'
+		'forwarded_port:port'      \
+		'server_public_key:string' \
+		'remote_public_key:string'
+}
+
+_add_key() { # key file
+	[ -n "$1" ] || return
+	mkdir -p -m 0700 "$(dirname "$2")"
+	grep -s -q "$1" "$2" || echo "$1" >> "$2"
+	chmod 0600 "$2"
 }
 
 start_instance() {
@@ -18,11 +27,16 @@ start_instance() {
 
 	[ "$enable" = "0" ] && return
 
+	_add_key "${host} ${server_public_key% *}" ~/.ssh/known_hosts
+	_add_key "${remote_public_key}" /etc/dropbear/authorized_keys
+
 	procd_open_instance
-	procd_set_param command /usr/bin/ssh -y -y -l limited-user "$host" -p "$port" -N -R "6666:0.0.0.0:$forwarded_port" -K 30 -i /etc/dropbear/dropbear_rsa_host_key
+	procd_set_param command /usr/bin/ssh -l limited-user "$host" -p "$port" -N -R "6666:0.0.0.0:$forwarded_port" -K 30 -i /etc/dropbear/dropbear_rsa_host_key
 	procd_set_param respawn 15 30 0
 	procd_set_param stdout 1
 	procd_set_param stderr 1
+	procd_set_param user root
+	procd_set_param env HOME=/root
 	procd_close_instance
 }
 
