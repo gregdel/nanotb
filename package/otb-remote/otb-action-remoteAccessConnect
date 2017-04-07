@@ -25,4 +25,4 @@ set otb-remote.${id}.remote_public_key='${remote_public_key}'
 commit otb-remote
 EOF
 
-reload_config
+/etc/init.d/otb-remote restart
