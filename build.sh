@@ -42,6 +42,8 @@ case "$1" in
 		CONFIG_TARGET_x86=y
 		CONFIG_TARGET_x86_64=y
 		CONFIG_TARGET_x86_64_Generic=y
+		CONFIG_GRUB_SERIAL=""
+		CONFIG_GRUB_TIMEOUT="0"
 		EOF
 		;;
 esac
@@ -52,6 +54,7 @@ OTB_VERSION=$(git describe --always)
 echo "${OTB_VERSION}" > version
 
 make defconfig
+make clean
 make "$@"
 
 find bin -name "${OTB_DIST}*${OTB_VERSION}*" -and -not -name "*.sig" \
