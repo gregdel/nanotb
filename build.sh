@@ -8,24 +8,10 @@ OTB_REPO=${OTB_REPO:-http://$(curl -sS ipaddr.ovh):8000}
 OTB_BRANCH=${OTB_BRANCH:-x86_uefi}
 OTB_SOURCE=https://github.com/sduponch/source.git
 
-if [ ! -d source ]; then
+[ -d source ] || \
 	git clone --depth=1 "${OTB_SOURCE}" --branch "${OTB_BRANCH}" source
 
-	# do not use ttyS0 on x86
-	cat > source/target/linux/x86/base-files/etc/inittab <<-EOF
-	::sysinit:/etc/init.d/rcS S boot
-	::shutdown:/etc/init.d/rcS K shutdown
-	tty1::askfirst:/usr/libexec/login.sh
-	EOF
-fi
-
-cp -rf files source
-cp -rf package source/package/otb
-
-[ -f key-build ] && cp -f key-build* source
-
-rm -rf source/.config
-[ -f config ] && cp -f config source/.config
+rsync -avh custom/ source/
 
 cd source
 
