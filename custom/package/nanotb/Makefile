@@ -1,7 +1,7 @@
 include $(TOPDIR)/rules.mk
 
 PKG_NAME:=nanotb
-PKG_VERSION:=1.0
+PKG_VERSION:=1.1
 PKG_RELEASE:=0
 
 include $(INCLUDE_DIR)/package.mk
