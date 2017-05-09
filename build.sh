@@ -5,8 +5,8 @@ set -e
 OTB_DIST=${OTB_DIST:-nanotb}
 OTB_REPO=${OTB_REPO:-http://$(curl -sS ipaddr.ovh):8000}
 
-OTB_BRANCH=${OTB_BRANCH:-x86_uefi}
-OTB_SOURCE=https://github.com/sduponch/source.git
+OTB_BRANCH=${OTB_BRANCH:-lede-17.01}
+OTB_SOURCE=https://github.com/ovh/overthebox-lede
 
 [ -d source ] || \
 	git clone --depth=1 "${OTB_SOURCE}" --branch "${OTB_BRANCH}" source
@@ -14,6 +14,8 @@ OTB_SOURCE=https://github.com/sduponch/source.git
 rsync -avh custom/ source/
 
 cd source
+
+echo "${OTB_BRANCH}" > version
 
 cat >> .config <<EOF
 CONFIG_IMAGEOPT=y
@@ -43,9 +45,6 @@ case "$1" in
 esac
 
 shift
-
-OTB_VERSION=$(git describe --always)
-echo "${OTB_VERSION}" > version
 
 make defconfig
 make clean
