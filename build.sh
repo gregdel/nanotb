@@ -25,6 +25,8 @@ CONFIG_VERSION_REPO="${OTB_REPO}"
 CONFIG_PACKAGE_${OTB_DIST}=y
 EOF
 
+rm -f files/etc/inittab
+
 case "$1" in
 	pi3)
 		cat >> .config <<-EOF
@@ -38,8 +40,20 @@ case "$1" in
 		CONFIG_TARGET_x86=y
 		CONFIG_TARGET_x86_64=y
 		CONFIG_TARGET_x86_64_Generic=y
+		EOF
+		;;
+	v2b)
+		cat >> .config <<-EOF
+		CONFIG_TARGET_x86=y
+		CONFIG_TARGET_x86_64=y
+		CONFIG_TARGET_x86_64_Generic=y
 		CONFIG_GRUB_SERIAL=""
 		CONFIG_GRUB_TIMEOUT="0"
+		EOF
+		cat > files/etc/inittab <<-EOF
+		::sysinit:/etc/init.d/rcS S boot
+		::shutdown:/etc/init.d/rcS K shutdown
+		tty1::askfirst:/usr/libexec/login.sh
 		EOF
 		;;
 esac
