@@ -4,6 +4,19 @@ method=$1
 path=$2
 shift 2
 
+_log() {
+    logger -t otb-call -p 7 "$*"
+}
+
+debug=$(uci get overthebox.me.debug)
+if [ "$debug" = 'true' ]; then
+    if [ -n "$*" ]; then
+        _log "${method} ${path} with params $*"
+    else
+        _log "${method} ${path} with no extra params"
+    fi
+fi
+
 exec curl -sS -m 5 -X "${method}" \
 	"https://provisionning.overthebox.net:4443/${path}" \
 	-H "Content-Type: application/json" \
