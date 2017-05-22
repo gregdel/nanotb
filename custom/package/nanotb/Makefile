@@ -7,8 +7,7 @@ PKG_RELEASE:=0
 include $(INCLUDE_DIR)/package.mk
 
 MY_DEPENDS := otb-remote otb-config \
-	getopt dmidecode tc iperf3 mtr bind-dig \
-	rng-tools ss strace tcpdump-mini ip-full
+	getopt tc iperf3 ss strace tcpdump-mini ip-full jq
 
 define Package/$(PKG_NAME)
 SECTION:=OVH
