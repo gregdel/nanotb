@@ -2,46 +2,82 @@
 
 . /lib/functions.sh
 . /lib/functions/network.sh
-. /usr/share/libubox/jshn.sh
 
-PERIOD=
+# Global var containing the interfaces as json
+INTERFACES=""
 
-_add_interface() {
-	printf ${PERIOD}'{"ip":"%s","netmask":"%s","gateway":"%s","name":"%s","multipath_status":"%s"}' "$@"
-	PERIOD=,
+_get_packages() {
+    # Only return the kernel for now
+    local version=$(opkg info kernel | grep Version | cut -d' ' -f2)
+    jq -n -c --arg kernel_version "$version" '{pakages: [{name: "kernel", version: $kernel_version}]}'
+}
+
+_get_interface_json() {
+    local dns gateway ifname interface interface ipaddr macaddr metric multipath netmask proto
+    config_get dns "$1" dns
+    config_get gateway "$1" gateway
+    config_get ifname "$1" ifname
+    config_get interface "$1" interface
+    config_get ipaddr "$1" ipaddr
+    config_get macaddr "$1" macaddr
+    config_get metric "$1" metric
+    config_get multipath "$1" multipath
+    config_get netmask "$1" netmask
+    config_get proto "$1" proto
+
+    # Get the public ip for the interface if the gateway is defined
+    local public_ip
+    if [ -n "$gateway" ]; then
+        public_ip=$(curl -s --max-time 1 --interface "$ifname" ifconfig.ovh)
+    fi
+
+    local dns_servers
+    if [ -n "$dns" ]; then
+        dns_servers=$(jq -n -c --arg dns "$dns" '$dns | split(" ")')
+    else
+        dns_servers='[]'
+    fi
+
+    jq -n -c --argjson dns_servers "$dns_servers" \
+             --arg gateway "$gateway" \
+             --arg ifname "$ifname" \
+             --arg interface "$interface" \
+             --arg ipaddr "$ipaddr" \
+             --arg macaddr "$macaddr" \
+             --arg metric "$metric" \
+             --arg multipath "$multipath" \
+             --arg netmask "$netmask" \
+             --arg proto "$proto" \
+             --arg public_ip "$public_ip" \
+             --arg name "$1" \
+    '{
+        public_ip: $public_ip,
+        ip: $ipaddr,
+        netmask: $netmask,
+        name: $name,
+        dns_servers: $dns_servers,
+        multipath_status: $multipath,
+     }'
 }
 
 _get_interface() {
-	json_cleanup
-	json_load "$(ifstatus "$1")"
-
-	json_get_var device device
-
-	if json_select ipv4-address && json_select 1 >/dev/null; then
-		json_get_var address address
-		json_get_var mask mask
-		json_select ..
-		json_select ..
-	fi
-
-	if json_select route && json_select 1 >/dev/null; then
-		json_get_var gateway target
-		json_select ..
-		json_select ..
-	fi
-
-	config_get multipath "$1" multipath
-
-	_add_interface "${address}" "${mask}" "${gateway}" "${device}" "${multipath}"
+    local json=$(_get_interface_json "$1")
+    INTERFACES=$(jq -n -c --argjson interfaces "$INTERFACES" --argjson interface "$json" '$interfaces + [$interface]')
 }
 
 _properties() {
-	printf '{"interfaces":['
+    INTERFACES="[]"
+    config_load network
+    config_foreach _get_interface interface ret
 
-	config_load network
-	config_foreach _get_interface interface
+    local packages=$(_get_packages)
 
-	printf '],"packages":[]}'
+    jq -n -c --argjson interfaces "$INTERFACES" \
+             --argjson packages "$packages" \
+    '{
+        interfaces: $interfaces,
+        packages: $packages,
+     }'
 }
 
 _properties | otb-call POST "devices/${OTB_DEVICE_ID}/properties" \
