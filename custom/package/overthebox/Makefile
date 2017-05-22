@@ -33,6 +33,8 @@ define Package/$(PKG_NAME)/install
 	$(INSTALL_BIN) init $(1)/etc/init.d/$(PKG_NAME)
 	$(INSTALL_DIR) $(1)/etc/config
 	touch $(1)/etc/config/$(PKG_NAME)
+	$(INSTALL_DIR) $(1)/usr/lib
+	$(INSTALL_DATA) liboverthebox $(1)/usr/lib/liboverthebox
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

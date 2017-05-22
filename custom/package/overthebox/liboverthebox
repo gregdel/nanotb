@@ -1,0 +1,5 @@
+# vim: set ft=sh noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
+
+json_get() {
+	jq -r -n --argjson content "$1" "\$content.$2"
+}
