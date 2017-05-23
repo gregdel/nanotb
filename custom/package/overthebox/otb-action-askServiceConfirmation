@@ -1,11 +1,9 @@
 #!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
-set -e
+. /usr/lib/liboverthebox
 
-. /usr/share/libubox/jshn.sh
+json="$(otb-call GET "devices/${OTB_DEVICE_ID}/service")"
+service=$(json_get "$json" service)
 
-json_load "$(otb-call GET "devices/${OTB_DEVICE_ID}/service")"
-json_get_var service service
-
-otb-call POST "devices/${OTB_DEVICE_ID}/service/${service}/confirm" \
-	-o /dev/null
+otb-call POST "devices/${OTB_DEVICE_ID}/service/${service}/confirm"
