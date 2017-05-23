@@ -3,5 +3,5 @@
 
 set -e
 
-opkg update -V0
+opkg update
 opkg list-upgradable | cut -d' ' -f1 | grep -v Multiple | xargs -r -n 1 opkg upgrade -V0
