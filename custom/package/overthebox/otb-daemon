@@ -24,19 +24,42 @@ while true; do
         action=$(json_get "$ret" action)
         id=$(json_get "$ret" id)
 
-        if [ -n "$action" ]; then
-            [ -n "$OTB_DEBUG" ] && _log_debug "Calling $action with id $id"
-            otb-action-"$action" "$ret" && action_status="done" || action_status="error"
-        else
+        # Check the action argument
+        if [ -z "$action" ]; then
             [ -n "$OTB_DEBUG" ] && _log_debug "Invalid action"
+            continue
+        fi
+
+        [ -n "$OTB_DEBUG" ] && _log_debug "Calling $action with id $id"
+
+        # Store the stderr to a file
+        stderr_file=$(mktemp)
+
+        stdout="$(otb-action-"$action" "$ret" 2>"$stderr_file")"
+        [ $? -eq 0 ] && action_status="done" || action_status="error"
+
+        # Get the error from stderr
+        stderr=$(cat "$stderr_file")
+        rm "$stderr_file"
+
+		if [ -z "$id" ] || [ "$id" = "null" ]; then
+			[ -n "$OTB_DEBUG" ] && [ "$id" != "null" ] && \
+				_log_debug "Action without id, no need to confirm"
+			continue
+		fi
+
+		[ -z "$stdout" ] && stdout="-"
+		[ -z "$stderr" ] && stderr="-"
+		details=$(printf "Details:\nStdout:\n%s\n\nStderr:\n%s" "$stdout" "$stderr")
+
+        # shellcheck disable=SC2016
+        json_ret="$(jq -c -n --arg status "$action_status" --arg details "$details" \
+                     '{status: $status, details: $details}')"
+        if [ -n "$err" ]; then
+            [ -n "$OTB_DEBUG" ] && _log_debug "$err"
         fi
 
         # shellcheck disable=SC2016
-	if [ -n "$id" ] && [ "$id" != "null" ]; then
-            [ -n "$OTB_DEBUG" ] && _log_debug "Action $action with id $id done with status $action_status"
-            otb-call POST "devices/$OTB_DEVICE_ID/actions/$id" \
-                --data "$(jq -c -n --arg status "$action_status" '{status: $status}')"
-        else
-            [ -n "$OTB_DEBUG" ] && [ "$id" != "null" ] && _log_debug "Invalid action id"
-        fi
+        [ -n "$OTB_DEBUG" ] && _log_debug "Action $action with id $id done with status $action_status"
+        otb-call POST "devices/$OTB_DEVICE_ID/actions/$id" --data "$json_ret"
 done
