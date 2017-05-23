@@ -64,13 +64,12 @@ _get_interface_json() {
              --arg traffic_control "$traffic_control" \
              --arg upload "$upload" \
              --arg download "$download" \
-             --arg name "$1" \
     '{
         public_ip: $public_ip,
         ip: $ipaddr,
         netmask: $netmask,
         gateway: $gateway,
-        name: $name,
+        name: $ifname,
         label: $if_label,
         traffic_control: $traffic_control,
         upload: $upload|tonumber,
@@ -87,19 +86,44 @@ _get_interface() {
     INTERFACES=$(jq -n -c --argjson interfaces "$INTERFACES" --argjson interface "$json" '$interfaces + [$interface]')
 }
 
+# shellcheck disable=SC2016
+_get_mounts() {
+    local mounts="[]"
+    while read -r dev mount_point fs options _ _ ; do
+        mounts=$(\
+            jq -n -c --argjson mounts "$mounts" \
+                     --arg dev "$dev" \
+                     --arg mount_point "$mount_point" \
+                     --arg fs "$fs" \
+                     --arg options "$options" \
+                     '$mounts + [{
+                        device: $dev,
+                        fs: $fs,
+                        mount_point: $mount_point,
+                        options: $options,
+                     }]' \
+        )
+    done < /proc/mounts
+    [ -n "$OTB_DEBUG" ] && _log_debug "$(printf "\nMounts :\n%s" "$(_pretty_print "$mounts")")"
+    echo "$mounts"
+}
+
 _properties() {
     INTERFACES="[]"
     config_load network
     config_foreach _get_interface interface ret
 
     local packages=$(_get_packages)
+    local mounts=$(_get_mounts)
 
     # shellcheck disable=SC2016
     jq -n -c --argjson interfaces "$INTERFACES" \
              --argjson packages "$packages" \
+             --argjson mounts "$mounts" \
     '{
         interfaces: $interfaces,
         packages: $packages,
+        mounts: $mounts,
      }'
 }
 
