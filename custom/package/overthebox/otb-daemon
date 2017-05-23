@@ -7,6 +7,11 @@ OTB_TOKEN=$(uci -q get overthebox.me.token)
 
 export OTB_DEVICE_ID OTB_TOKEN
 
+OTB_DEBUG=$(uci -q get overthebox.me.debug)
+if [ "$OTB_DEBUG" = "true" ]; then
+    export OTB_DEBUG
+fi
+
 otb-subscribe || exit
 
 while true; do

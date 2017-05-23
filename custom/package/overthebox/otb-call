@@ -1,24 +1,32 @@
 #!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
+
+. /usr/lib/liboverthebox
 
 method=$1
 path=$2
 shift 2
 
-_log() {
-    logger -t otb-call -p 7 "$*"
+_call() {
+    curl --silent --show-error --max-time 5 \
+        -X "${method}" \
+        -H "Content-Type: application/json" \
+        -H "X-Auth-OVH: ${OTB_TOKEN}" \
+        -H "X-Overthebox-Version: $(cat /etc/otb-version || echo 0.0-0)" \
+        "https://provisionning.overthebox.net:4443/${path}" \
+        "$@"
 }
 
-debug=$(uci get overthebox.me.debug)
-if [ "$debug" = 'true' ]; then
+if [ -n "$OTB_DEBUG" ]; then
     if [ -n "$*" ]; then
-        _log "${method} ${path} with params $*"
+        _log_debug "${method} ${path} with params $*"
     else
-        _log "${method} ${path} with no extra params"
+        _log_debug "${method} ${path} with no extra params"
     fi
 fi
 
-exec curl -sS -m 5 -X "${method}" \
-	"https://provisionning.overthebox.net:4443/${path}" \
-	-H "Content-Type: application/json" \
-	-H "X-Auth-OVH: ${OTB_TOKEN}" \
-	-H "X-Overthebox-Version: $(cat /etc/otb-version || echo 0.0-0)" "$@"
+output=$(_call "$@")
+
+[ -n "$OTB_DEBUG" ] && _log_debug "$(printf "\nResult:\n%s" "$(_pretty_print "$output")")"
+
+echo "$output"

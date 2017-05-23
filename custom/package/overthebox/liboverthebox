@@ -1,5 +1,45 @@
 # vim: set ft=sh noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
+# 1.alert
+# 2.crit
+# 3.err
+# 4.warn
+# 5.notice
+# 6.info
+# 7.debug
+_log() {
+	local level=$1
+	shift
+    logger -t otb-call -p "$level" "$@"
+}
+
+_log_err() {
+	_log 3 "$@"
+}
+
+_log_warn() {
+	_log 4 "$@"
+}
+
+_log_info() {
+	_log 6 "$@"
+}
+
+_log_debug() {
+	_log 7 "$@"
+}
+
+# shellcheck disable=SC2016
+_pretty_print() {
+    # Try to pretty print as json
+    local pretty_output=$(jq -e -n --argjson output "$1" '$output' 2>/dev/null)
+    if [ $? -eq "0" ]; then
+		echo "$pretty_output"
+    else
+		echo "$1"
+    fi
+}
+
 json_get() {
 	jq -r -n --argjson content "$1" "\$content.$2"
 }
