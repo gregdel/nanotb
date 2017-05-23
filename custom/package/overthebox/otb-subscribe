@@ -1,4 +1,5 @@
 #!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
 set -e
 
@@ -9,6 +10,7 @@ set -e
 
 network_get_ipaddr lan_ip lan
 
+# shellcheck disable=SC2016
 post_data=$(jq -n -c --arg lan_ip "$lan_ip" '{private_ips: [$lan_ip]}')
 content=$(otb-call POST subscribe -d"$post_data")
 

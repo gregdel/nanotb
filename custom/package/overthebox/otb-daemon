@@ -1,6 +1,7 @@
 #!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
-. /usr/share/libubox/jshn.sh
+. /usr/lib/liboverthebox
 
 OTB_DEVICE_ID=$(uci -q get overthebox.me.device_id)
 OTB_TOKEN=$(uci -q get overthebox.me.token)
@@ -15,19 +16,27 @@ fi
 otb-subscribe || exit
 
 while true; do
+        action_status=""
 	ret=$(otb-call GET "devices/${OTB_DEVICE_ID}/actions")
 
 	[ -n "${ret}" ] || exit
 
-	json_load "${ret}"
-	json_get_var action action
-	json_get_var id id
+        action=$(json_get "$ret" action)
+        id=$(json_get "$ret" id)
 
-	[ -n "${action}" ] && \
-		otb-action-"${action}" "${ret}" && status="done" || status="error"
+        if [ -n "$action" ]; then
+            [ -n "$OTB_DEBUG" ] && _log_debug "Calling $action with id $id"
+            otb-action-"$action" "$ret" && action_status="done" || action_status="error"
+        else
+            [ -n "$OTB_DEBUG" ] && _log_debug "Invalid action"
+        fi
 
-	[ -n "${id}" ] && \
-		otb-call POST "devices/${OTB_DEVICE_ID}/actions/${id}" \
-			-d'{ "status": "'${status}'" }' \
-			-o /dev/null
+        # shellcheck disable=SC2016
+	if [ -n "$id" ] && [ "$id" != "null" ]; then
+            [ -n "$OTB_DEBUG" ] && _log_debug "Action $action with id $id done with status $action_status"
+            otb-call POST "devices/$OTB_DEVICE_ID/actions/$id" \
+                --data "$(jq -c -n --arg status "$action_status" '{status: $status}')"
+        else
+            [ -n "$OTB_DEBUG" ] && [ "$id" != "null" ] && _log_debug "Invalid action id"
+        fi
 done
