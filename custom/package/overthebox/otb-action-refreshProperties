@@ -1,19 +1,24 @@
 #!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
 . /lib/functions.sh
 . /lib/functions/network.sh
+. /usr/lib/liboverthebox
 
 # Global var containing the interfaces as json
 INTERFACES=""
 
+# shellcheck disable=SC2016
 _get_packages() {
     # Only return the kernel for now
     local version=$(opkg info kernel | grep Version | cut -d' ' -f2)
-    jq -n -c --arg kernel_version "$version" '{pakages: [{name: "kernel", version: $kernel_version}]}'
+    jq -n -c --arg kernel_version "$version" '[{ name: "kernel", version: $kernel_version }]'
 }
 
 _get_interface_json() {
-    local dns gateway ifname interface interface ipaddr macaddr metric multipath netmask proto
+    local dns gateway ifname interface interface ipaddr \
+          macaddr metric multipath netmask proto if_label \
+          traffic_control upload download
     config_get dns "$1" dns
     config_get gateway "$1" gateway
     config_get ifname "$1" ifname
@@ -24,6 +29,10 @@ _get_interface_json() {
     config_get multipath "$1" multipath
     config_get netmask "$1" netmask
     config_get proto "$1" proto
+    config_get if_label "$1" label
+    config_get traffic_control "$1" trafficcontrol
+    config_get upload "$1" upload "0"
+    config_get download "$1" download "0"
 
     # Get the public ip for the interface if the gateway is defined
     local public_ip
@@ -33,11 +42,13 @@ _get_interface_json() {
 
     local dns_servers
     if [ -n "$dns" ]; then
+        # shellcheck disable=SC2016
         dns_servers=$(jq -n -c --arg dns "$dns" '$dns | split(" ")')
     else
         dns_servers='[]'
     fi
 
+    # shellcheck disable=SC2016
     jq -n -c --argjson dns_servers "$dns_servers" \
              --arg gateway "$gateway" \
              --arg ifname "$ifname" \
@@ -49,19 +60,30 @@ _get_interface_json() {
              --arg netmask "$netmask" \
              --arg proto "$proto" \
              --arg public_ip "$public_ip" \
+             --arg if_label "$if_label" \
+             --arg traffic_control "$traffic_control" \
+             --arg upload "$upload" \
+             --arg download "$download" \
              --arg name "$1" \
     '{
         public_ip: $public_ip,
         ip: $ipaddr,
         netmask: $netmask,
+        gateway: $gateway,
         name: $name,
+        label: $if_label,
+        traffic_control: $traffic_control,
+        upload: $upload|tonumber,
+        download: $download|tonumber,
         dns_servers: $dns_servers,
         multipath_status: $multipath,
      }'
 }
 
+# shellcheck disable=SC2016
 _get_interface() {
     local json=$(_get_interface_json "$1")
+    [ -n "$OTB_DEBUG" ] && _log_debug "$(printf "\nInterface $1 properties:\n%s" "$(_pretty_print "$json")")"
     INTERFACES=$(jq -n -c --argjson interfaces "$INTERFACES" --argjson interface "$json" '$interfaces + [$interface]')
 }
 
@@ -72,6 +94,7 @@ _properties() {
 
     local packages=$(_get_packages)
 
+    # shellcheck disable=SC2016
     jq -n -c --argjson interfaces "$INTERFACES" \
              --argjson packages "$packages" \
     '{
@@ -80,5 +103,4 @@ _properties() {
      }'
 }
 
-_properties | otb-call POST "devices/${OTB_DEVICE_ID}/properties" \
-	-d@- -o /dev/null
+otb-call POST "devices/${OTB_DEVICE_ID}/properties" --data "$(_properties)"
