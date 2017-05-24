@@ -1,51 +1,41 @@
 #!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
 set -e
 
-. /usr/share/libubox/jshn.sh
+. /usr/lib/liboverthebox
 
-json_load "$(otb-call GET "devices/${OTB_DEVICE_ID}/config")"
+config="$(otb-call GET "devices/$OTB_DEVICE_ID/config")"
 
-json_select glorytun_mud_conf
-json_get_var gt_dev dev
-json_get_var gt_host server
-json_get_var gt_port port
-json_get_var gt_key key
-json_get_var gt_mtu mtu
-json_select ..
+_get() {
+    json_get "$config" "$1"
+}
 
-json_select log_conf
-json_get_var log_ip host
-json_get_var log_port port
-json_get_var log_proto protocol
-json_get_var log_prefix key
-json_select ..
-
-json_select graph_conf
-json_get_var graph_url host
-json_get_var graph_freq write_frequency
-json_select ..
-
-#set network.route=mud
-#set network.route.interface=lan
-#set network.route.target=${gt_host}
+CONFIG_FILES="
+    /etc/config/system
+    /etc/config/graph
+    /etc/config/glorytun
+"
+for file in $CONFIG_FILES; do
+    [ -f "$file" ] || touch "$file"
+done
 
 uci -q batch << EOF
 set glorytun.tun=mud
-set glorytun.tun.dev=${gt_dev}
-set glorytun.tun.host=${gt_host}
-set glorytun.tun.port=${gt_port}
-set glorytun.tun.key=${gt_key}
-set glorytun.tun.mtu=${gt_mtu}
+set glorytun.tun.dev=$(_get glorytun_mud_conf.dev)
+set glorytun.tun.host=$(_get glorytun_mud_conf.server)
+set glorytun.tun.port=$(_get glorytun_mud_conf.port)
+set glorytun.tun.key=$(_get glorytun_mud_conf.key)
+set glorytun.tun.mtu=$(_get glorytun_mud_conf.mtu)
 
-set system.@system[0].log_ip=${log_ip}
-set system.@system[0].log_port=${log_port}
-set system.@system[0].log_proto=${log_proto}
-set system.@system[0].log_prefix=${log_prefix}
+set system.@system[0].log_ip=$(_get log_conf.host)
+set system.@system[0].log_port=$(_get log_conf.port)
+set system.@system[0].log_proto=$(_get log_conf.protocol)
+set system.@system[0].log_prefix=$(_get log_conf.key)
 
 set graph.opentsdb=opentsdb
-set graph.opentsdb.url=${graph_url}
-set graph.opentsdb.freq=${graph_freq}
+set graph.opentsdb.url=$(_get graph_conf.host)
+set graph.opentsdb.freq=$(_get graph_conf.write_frequency)
 
 commit
 EOF
