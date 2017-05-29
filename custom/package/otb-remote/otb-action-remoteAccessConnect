@@ -1,27 +1,38 @@
 #!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
 set -e
 
-. /usr/share/libubox/jshn.sh
+. /usr/lib/liboverthebox
 
-json_load "$1"
-json_select arguments || return
-json_get_var host ip
-json_get_var port port
-json_get_var forwarded_port forwarded_port
-json_get_var server_public_key server_public_key
-json_get_var remote_public_key remote_public_key
-json_get_var remote_access_id remote_access_id
+content="$1"
+_get() {
+    json_get "$content" "arguments.$1"
+}
 
-id=$(echo "${remote_access_id}" | tr - _)
+remote_access_id="$(_get remote_access_id)"
+if [ -z "$remote_access_id" ]; then
+    echo "Invalid remote access ID"
+    exit 1
+fi
+uci_id=$(echo "$remote_access_id" | tr - _)
+
+ip="$(_get ip)"
+port="$(_get port)"
+forwarded_port="$(_get forwarded_port)"
+server_public_key="$(_get server_public_key)"
+remote_public_key="$(_get remote_public_key)"
+
+[ -n "$OTB_DEBUG" ] && \
+	_log_debug "Connecting remote access $remote_access_id to ${ip}:${port} forwarding $forwarded_port"
 
 uci -q batch <<EOF
-set otb-remote.${id}=remote
-set otb-remote.${id}.host='${host}'
-set otb-remote.${id}.port='${port}'
-set otb-remote.${id}.forwarded_port='${forwarded_port}'
-set otb-remote.${id}.server_public_key='${server_public_key}'
-set otb-remote.${id}.remote_public_key='${remote_public_key}'
+set otb-remote.${uci_id}=remote
+set otb-remote.${uci_id}.host='${ip}'
+set otb-remote.${uci_id}.port='${port}'
+set otb-remote.${uci_id}.forwarded_port='${forwarded_port}'
+set otb-remote.${uci_id}.server_public_key='${server_public_key}'
+set otb-remote.${uci_id}.remote_public_key='${remote_public_key}'
 commit otb-remote
 EOF
 

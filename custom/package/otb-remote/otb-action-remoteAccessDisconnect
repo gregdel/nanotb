@@ -1,17 +1,18 @@
 #!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
 set -e
 
-. /usr/share/libubox/jshn.sh
-json_load "$1"
-json_select arguments || return
-json_get_var remote_access_id remote_access_id
+. /usr/lib/liboverthebox
 
-id=$(echo "${remote_access_id}" | tr - _)
+remote_access_id="$(json_get "$1" 'arguments.remote_access_id')"
+uci_id=$(echo "$remote_access_id" | tr - _)
 
 uci -q batch <<EOF
-delete otb-remote.${id}
+delete otb-remote.${uci_id}
 commit otb-remote
 EOF
+
+# TODO: delete the user
 
 reload_config
