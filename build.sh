@@ -15,6 +15,7 @@ rsync -avh custom/ source/
 
 cat > source/feeds.conf <<EOF
 src-git packages https://git.lede-project.org/feed/packages.git;lede-17.01
+src-git overthebox https://github.com/ovh/overthebox-feeds.git
 src-link feed $(pwd)/feed
 EOF
 
