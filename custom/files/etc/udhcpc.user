@@ -80,4 +80,3 @@ if [ -z "$KNOWN_ROUTER" ]; then
 	/etc/init.d/network reload
 	/etc/init.d/firewall reload
 fi
-fi
