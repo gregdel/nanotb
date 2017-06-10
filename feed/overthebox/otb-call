@@ -17,16 +17,10 @@ _call() {
         "$@"
 }
 
-if [ -n "$OTB_DEBUG" ]; then
-    if [ -n "$*" ]; then
-        _log_debug "${method} ${path} with params $*"
-    else
-        _log_debug "${method} ${path} with no extra params"
-    fi
-fi
+otb_debug "${method} ${path} args: $*"
 
 output=$(_call "$@")
 
-[ -n "$OTB_DEBUG" ] && _log_debug "$(printf "\nResult:\n%s" "$(_pretty_print "$output")")"
+otb_debug "$(printf "\nResult:\n%s" "$(otb_pretty_print "$output")")"
 
 echo "$output"

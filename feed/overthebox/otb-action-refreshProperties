@@ -82,7 +82,7 @@ _get_interface_json() {
 # shellcheck disable=SC2016
 _get_interface() {
 	local json=$(_get_interface_json "$1")
-	[ -n "$OTB_DEBUG" ] && _log_debug "$(printf "\nInterface $1 properties:\n%s" "$(_pretty_print "$json")")"
+	otb_debug "$(printf "\nInterface $1 properties:\n%s" "$(otb_pretty_print "$json")")"
 	INTERFACES=$(jq -n -c --argjson interfaces "$INTERFACES" --argjson interface "$json" '$interfaces + [$interface]')
 }
 
@@ -97,15 +97,15 @@ _get_mounts() {
 			--arg fs "$fs" \
 			--arg options "$options" \
 			'$mounts + [{
-		device: $dev,
-		fs: $fs,
-		mount_point: $mount_point,
-		options: $options,
-	}]' \
+				device: $dev,
+				fs: $fs,
+				mount_point: $mount_point,
+				options: $options,
+			}]' \
 		)
-done < /proc/mounts
-[ -n "$OTB_DEBUG" ] && _log_debug "$(printf "\nMounts :\n%s" "$(_pretty_print "$mounts")")"
-echo "$mounts"
+	done < /proc/mounts
+	otb_debug "$(printf "\nMounts :\n%s" "$(otb_pretty_print "$mounts")")"
+	echo "$mounts"
 }
 
 _properties() {
@@ -121,10 +121,10 @@ _properties() {
 		--argjson packages "$packages" \
 		--argjson mounts "$mounts" \
 		'{
-	interfaces: $interfaces,
-	packages: $packages,
-	mounts: $mounts,
-}'
+			interfaces: $interfaces,
+			packages: $packages,
+			mounts: $mounts,
+		}'
 }
 
 otb-call POST "devices/${OTB_DEVICE_ID}/properties" --data "$(_properties)"

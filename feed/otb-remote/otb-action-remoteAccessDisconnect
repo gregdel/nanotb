@@ -5,7 +5,7 @@ set -e
 
 . /lib/overthebox
 
-remote_access_id="$(json_get "$1" 'arguments.remote_access_id')"
+remote_access_id="$(otb_json_get "$1" 'arguments.remote_access_id')"
 uci_id=$(echo "$remote_access_id" | tr - _)
 
 uci -q batch <<EOF

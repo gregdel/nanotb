@@ -7,7 +7,7 @@ set -e
 
 content="$1"
 _get() {
-	json_get "$content" "arguments.$1"
+	otb_json_get "$content" "arguments.$1"
 }
 
 remote_access_id="$(_get remote_access_id)"
@@ -20,8 +20,7 @@ uci_id=$(echo "$remote_access_id" | tr - _)
 luci_user="$(_get luci_user)"
 luci_password="$(_get luci_password)"
 
-[ -n "$OTB_DEBUG" ] && \
-	_log_debug "Preparing remote access $remote_access_id with custom user '$luci_user'"
+otb_debug "Preparing remote access $remote_access_id with custom user '$luci_user'"
 
 if [ "$luci_user" != 'null' ] && [ "$luci_password" != 'null' ]; then
 	uci -q batch <<-EOF
@@ -34,13 +33,13 @@ if [ "$luci_user" != 'null' ] && [ "$luci_password" != 'null' ]; then
 fi
 
 
-[ -n "$OTB_DEBUG" ] && _log_debug "Remote access $remote_access_id config written in uci"
+otb_debug "Remote access $remote_access_id config written in uci"
 
 [ -s /etc/dropbear/dropbear_rsa_host_key ] || exit
 
 pubkey=$(dropbearkey -y -f /etc/dropbear/dropbear_rsa_host_key | grep ssh-rsa)
 
-[ -n "$OTB_DEBUG" ] && _log_debug "Remote access $remote_access_id sending public key"
+otb_debug "Remote access $remote_access_id sending public key"
 
 # shellcheck disable=SC2016
 otb-call POST "devices/${OTB_DEVICE_ID}/remote_accesses/${remote_access_id}/keys" \

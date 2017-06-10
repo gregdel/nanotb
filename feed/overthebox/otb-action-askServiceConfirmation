@@ -4,6 +4,6 @@
 . /lib/overthebox
 
 json="$(otb-call GET "devices/${OTB_DEVICE_ID}/service")"
-service=$(json_get "$json" service)
+service=$(otb_json_get "$json" service)
 
 otb-call POST "devices/${OTB_DEVICE_ID}/service/${service}/confirm"

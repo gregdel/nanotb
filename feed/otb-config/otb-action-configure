@@ -8,7 +8,7 @@ set -e
 config="$(otb-call GET "devices/$OTB_DEVICE_ID/config")"
 
 _get() {
-    json_get "$config" "$1"
+    otb_json_get "$config" "$1"
 }
 
 CONFIG_FILES="

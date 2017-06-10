@@ -3,6 +3,6 @@
 
 . /lib/overthebox
 
-delay=$(json_get "$1" "arguments.delay")
+delay=$(otb_json_get "$1" "arguments.delay")
 
 exec sleep "${delay:-10}"
