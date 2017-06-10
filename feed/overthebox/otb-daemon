@@ -13,7 +13,7 @@ otb-subscribe || exit
 
 while true; do
 	action_status=""
-	ret=$(otb_call GET "devices/${OTB_DEVICE_ID}/actions")
+	ret=$(otb_device_get actions)
 
 	[ -n "${ret}" ] || exit
 
@@ -48,7 +48,7 @@ while true; do
 
 	# shellcheck disable=SC2016
 	otb_debug "Action $action with id $ACTION_ID done with status $action_status"
-	otb_call POST "devices/$OTB_DEVICE_ID/actions/$ACTION_ID" --data "$json_ret"
+	otb_device_post "actions/$ACTION_ID" --data "$json_ret"
 
 	unset ACTION_ID
 done

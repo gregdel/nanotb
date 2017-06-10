@@ -127,4 +127,4 @@ _properties() {
 		}'
 }
 
-otb_call POST "devices/${OTB_DEVICE_ID}/properties" --data "$(_properties)"
+otb_device_post properties --data "$(_properties)"

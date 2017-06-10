@@ -5,7 +5,7 @@ set -e
 
 . /lib/overthebox
 
-config="$(otb-call GET "devices/$OTB_DEVICE_ID/config")"
+config=$(otb_device_get config)
 
 _get() {
     otb_json_get "$config" "$1"

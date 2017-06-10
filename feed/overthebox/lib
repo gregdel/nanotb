@@ -34,5 +34,17 @@ otb_call() {
 		-H "X-Overthebox-Version: $(cat /etc/otb-version || echo 0.0-0)" \
 		"https://provisionning.overthebox.net:4443/$path" \
 		"$@"
-	otb_debug "otb_call: $method $path $* return: $?"
+	otb_debug "call: $method $path $* return: $?"
+}
+
+otb_device_post() {
+	subpath=$1
+	shift 1
+	otb_call POST "devices/$OTB_DEVICE_ID/$subpath" "$@"
+}
+
+otb_device_get() {
+	subpath=$1
+	shift 1
+	otb_call GET "devices/$OTB_DEVICE_ID/$subpath" "$@"
 }
