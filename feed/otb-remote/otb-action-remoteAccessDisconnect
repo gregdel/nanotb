@@ -15,4 +15,4 @@ EOF
 
 # TODO: delete the user
 
-reload_config
+/etc/init.d/otb-remote restart
