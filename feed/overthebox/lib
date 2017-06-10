@@ -1,12 +1,32 @@
 # vim: set ft=sh noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
-otb_alert()  { logger -t otb -p 1 "$*" }
-otb_crit()   { logger -t otb -p 2 "$*" }
-otb_err()    { logger -t otb -p 3 "$*" }
-otb_warn()   { logger -t otb -p 4 "$*" }
-otb_notice() { logger -t otb -p 5 "$*" }
-otb_info()   { logger -t otb -p 6 "$*" }
-otb_debug()  { [ -n "$OTB_DEBUG" ] && logger -t otb -p 7 "$*" }
+otb_alert() {
+	logger -t otb -p 1 "$*"
+}
+
+otb_crit() {
+	logger -t otb -p 2 "$*"
+}
+
+otb_err() {
+	logger -t otb -p 3 "$*"
+}
+
+otb_warn() {
+	logger -t otb -p 4 "$*"
+}
+
+otb_notice() {
+	logger -t otb -p 5 "$*"
+}
+
+otb_info() {
+	logger -t otb -p 6 "$*"
+}
+
+otb_debug()  {
+	[ -n "$OTB_DEBUG" ] && logger -t otb -p 7 "$*"
+}
 
 # shellcheck disable=SC2016
 otb_pretty_print() {
