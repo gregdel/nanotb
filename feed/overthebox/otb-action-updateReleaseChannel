@@ -3,7 +3,7 @@
 
 set -e
 
-. /usr/lib/liboverthebox
+. /lib/overthebox
 
 content=$(otb-call GET "devices/${OTB_DEVICE_ID}/release_channel")
 

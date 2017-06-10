@@ -3,7 +3,7 @@
 
 . /lib/functions.sh
 . /lib/functions/network.sh
-. /usr/lib/liboverthebox
+. /lib/overthebox
 
 # Global var containing the interfaces as json
 INTERFACES=""

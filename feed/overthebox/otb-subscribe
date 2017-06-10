@@ -6,7 +6,7 @@ set -e
 [ -n "${OTB_TOKEN}" ] && [ -n "${OTB_DEVICE_ID}" ] && exit
 
 . /lib/functions/network.sh
-. /usr/lib/liboverthebox
+. /lib/overthebox
 
 network_get_ipaddr lan_ip lan
 

@@ -1,7 +1,7 @@
 #!/bin/sh
 # vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
-. /usr/lib/liboverthebox
+. /lib/overthebox
 
 method=$1
 path=$2
