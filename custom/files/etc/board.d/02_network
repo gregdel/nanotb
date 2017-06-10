@@ -24,10 +24,9 @@ case "$board" in
 	;;
 esac
 
-# always create tun0, shouldn't be here
-
 json_select_object "network"
-	json_select_object "mud"
+	# always create tun0, shouldn't be here
+	json_select_object "tun0"
 		json_add_string ifname "tun0"
 		json_add_string protocol "static"
 		json_add_string ipaddr "10.166.178.2"

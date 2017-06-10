@@ -3,51 +3,31 @@
 . /lib/functions/network.sh
 
 uci -q batch <<EOF
-set firewall.mptcp=zone
-set firewall.mptcp.name='mptcp'
-set firewall.mptcp.input='ACCEPT'
-set firewall.mptcp.output='ACCEPT'
-set firewall.mptcp.forward='ACCEPT'
-set firewall.mptcp.masq='1'
-
-set firewall.wanlan=forwarding
-set firewall.wanlan.src='wan'
-set firewall.wanlan.dest='lan'
-
-set firewall.lanwan=forwarding
-set firewall.lanwan.src='lan'
-set firewall.lanwan.dest='wan'
-
-set firewall.lanmptcp=forwarding
-set firewall.lanmptcp.src='lan'
-set firewall.lanmptcp.dest='mptcp'
-
-set firewall.mptcplan=forwarding
-set firewall.mptcplan.src='mptcp'
-set firewall.mptcplan.dest='lan'
+set network.globals.multipath='enable'
 EOF
 
 _setup() {
 	case "$1" in
-	if0)
-		uci -q batch <<-EOF
-		set network.$1.proto='dhcp'
-		set network.$1.metric='0'
-		set network.$1.defaultroute='0'
-		set network.$1.peerdns='0'
-		set network.$1.delegate='0'
-		EOF
-		;;
 	wan*)
 		uci -q batch <<-EOF
-		set network.$1.proto='dhcp'
-		set network.$1.metric='${1#wan}'
-		add_list firewall.mptcp.network='$1'
+		set network.$1.multipath=on
+		set network.$1.proto=dhcp
+		set network.$1.metric=${1#wan}
+		add_list firewall.@zone[1].network=$1
 		EOF
 		;;
 	none) # hack (see /etc/board.d/02_network)
+		uci -q delete "network.$1"
+		;;
+	*tun*)
 		uci -q batch <<-EOF
-		delete network.$1
+		set network.$1.multipath=off
+		add_list firewall.@zone[1].network=$1
+		EOF
+		;;
+	*)
+		uci -q batch <<-EOF
+		set network.$1.multipath=off
 		EOF
 		;;
 	esac
