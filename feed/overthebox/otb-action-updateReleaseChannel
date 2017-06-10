@@ -5,7 +5,7 @@ set -e
 
 . /lib/overthebox
 
-content=$(otb-call GET "devices/${OTB_DEVICE_ID}/release_channel")
+content=$(otb_call GET "devices/${OTB_DEVICE_ID}/release_channel")
 
 FILE_NAME="/etc/opkg/distfeeds.conf"
 

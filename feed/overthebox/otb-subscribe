@@ -12,7 +12,7 @@ network_get_ipaddr lan_ip lan
 
 # shellcheck disable=SC2016
 post_data=$(jq -n -c --arg lan_ip "$lan_ip" '{private_ips: [$lan_ip]}')
-content=$(otb-call POST subscribe -d"$post_data")
+content=$(otb_call POST subscribe -d"$post_data")
 
 uci -q batch << EOF
 set overthebox.me=config

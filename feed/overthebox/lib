@@ -22,3 +22,17 @@ otb_pretty_print() {
 otb_json_get() {
 	jq -r -n --argjson content "$1" "\$content.$2"
 }
+
+otb_call() {
+	method=$1
+	path=$2
+	shift 2
+	curl --silent --show-error --max-time 5 \
+		-X "$method" \
+		-H "Content-Type: application/json" \
+		-H "X-Auth-OVH: $OTB_TOKEN" \
+		-H "X-Overthebox-Version: $(cat /etc/otb-version || echo 0.0-0)" \
+		"https://provisionning.overthebox.net:4443/$path" \
+		"$@"
+	otb_debug "otb_call: $method $path $* return: $?"
+}
