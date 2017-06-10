@@ -1,31 +1,31 @@
 # vim: set ft=sh noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
 otb_alert() {
-	logger -t otb -p 1 "$*"
+	logger -t otb -p 1 "$*" || true
 }
 
 otb_crit() {
-	logger -t otb -p 2 "$*"
+	logger -t otb -p 2 "$*" || true
 }
 
 otb_err() {
-	logger -t otb -p 3 "$*"
+	logger -t otb -p 3 "$*" || true
 }
 
 otb_warn() {
-	logger -t otb -p 4 "$*"
+	logger -t otb -p 4 "$*" || true
 }
 
 otb_notice() {
-	logger -t otb -p 5 "$*"
+	logger -t otb -p 5 "$*" || true
 }
 
 otb_info() {
-	logger -t otb -p 6 "$*"
+	logger -t otb -p 6 "$*" || true
 }
 
 otb_debug()  {
-	[ -n "$OTB_DEBUG" ] && logger -t otb -p 7 "$*"
+	[ -n "$OTB_DEBUG" ] && logger -t otb -p 7 "$*" || true
 }
 
 # shellcheck disable=SC2016
@@ -47,6 +47,7 @@ otb_call() {
 	method=$1
 	path=$2
 	shift 2
+	otb_debug "call: $method $path $*"
 	curl --silent --show-error --max-time 5 \
 		-X "$method" \
 		-H "Content-Type: application/json" \
@@ -54,7 +55,6 @@ otb_call() {
 		-H "X-Overthebox-Version: $(cat /etc/otb-version || echo 0.0-0)" \
 		"https://provisionning.overthebox.net:4443/$path" \
 		"$@"
-	otb_debug "call: $method $path $* return: $?"
 }
 
 otb_device_post() {
