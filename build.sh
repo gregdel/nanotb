@@ -5,7 +5,7 @@ set -e
 OTB_DIST=${OTB_DIST:-nanotb}
 OTB_REPO=${OTB_REPO:-http://$(curl -sS ipaddr.ovh):8000}
 OTB_SOURCE=https://github.com/ovh/overthebox-lede
-OTB_NUMBER=17.05.30
+OTB_NUMBER=17.06.09
 OTB_VERSION=$(git rev-parse --short HEAD)
 
 [ -d source ] || \
@@ -15,7 +15,6 @@ rsync -avh custom/ source/
 
 cat > source/feeds.conf <<EOF
 src-git packages https://git.lede-project.org/feed/packages.git;lede-17.01
-src-git overthebox https://github.com/ovh/overthebox-feeds.git
 src-link feed $(pwd)/feed
 EOF
 
