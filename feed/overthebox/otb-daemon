@@ -9,41 +9,22 @@ otb_info "Ready for some action!"
 export OTB_DEVICE_ID OTB_TOKEN OTB_DEBUG
 
 while true; do
-	action_status=""
 	ret=$(otb_device_get actions)
-
-	[ -n "${ret}" ] || exit
+	[ -z "$ret" ] && exit
 
 	action=$(otb_json_get "$ret" action)
 	id=$(otb_json_get "$ret" id)
+	otb_debug "Got action '$action' with id '$id'"
+	[ -z "$action" ] && continue
 
-	# Check the action argument
-	if [ -z "$action" ]; then
-		otb_debug "Invalid action"
-		continue
-	fi
-
-	otb_debug "Calling $action with id $id"
-
-	output="$(otb-action-"$action" "$ret" 2>&1)"
-	[ $? -eq 0 ] && action_status="done" || action_status="error"
-
-	if [ -z "$id" ] || [ "$id" = "null" ]; then
-		[ "$id" != "null" ] && \
-			otb_debug "Action without id, no need to confirm"
-		continue
-	fi
+	output=$(otb-action-"$action" "$ret" 2>&1) && status="done" || status="error"
+	otb_debug "Got status '$status'"
+	[ -z "$id" ] || [ "$id" = "null" ] && continue
 
 	details=$(printf "Details:\n%s" "$output")
 
 	# shellcheck disable=SC2016
 	json_ret="$(jq -c -n --arg status "$action_status" --arg details "$details" \
 		'{status: $status, details: $details}')"
-	if [ -n "$err" ]; then
-		otb_debug "$err"
-	fi
-
-	# shellcheck disable=SC2016
-	otb_debug "Action $action with id $id done with status $action_status"
 	otb_device_post "actions/$id" --data "$json_ret"
 done
