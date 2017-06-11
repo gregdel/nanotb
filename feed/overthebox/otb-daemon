@@ -1,15 +1,12 @@
 #!/bin/sh
 # vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
+otb-subscribe || exit
+
 . /lib/overthebox
 
-OTB_DEVICE_ID=$(uci -q get overthebox.me.device_id)
-OTB_TOKEN=$(uci -q get overthebox.me.token)
-OTB_DEBUG=$(uci -q get overthebox.me.debug)
-
+otb_info "Ready for some action!"
 export OTB_DEVICE_ID OTB_TOKEN OTB_DEBUG
-
-otb-subscribe || exit
 
 while true; do
 	action_status=""

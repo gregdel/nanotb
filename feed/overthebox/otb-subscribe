@@ -3,11 +3,15 @@
 
 set -e
 
-[ -n "${OTB_TOKEN}" ] && [ -n "${OTB_DEVICE_ID}" ] && exit
-
-. /lib/functions/network.sh
 . /lib/overthebox
 
+[ -n "${OTB_TOKEN}" ] && [ -n "${OTB_DEVICE_ID}" ] && exit
+
+otb_info "Subscribing to the overthebox service..."
+
+. /lib/functions/network.sh
+
+lan_ip=
 network_get_ipaddr lan_ip lan
 
 # shellcheck disable=SC2016
@@ -16,9 +20,7 @@ content=$(otb_call POST subscribe -d"$post_data")
 
 uci -q batch << EOF
 set overthebox.me=config
-set overthebox.me.device_id="$(otb_json_get "$content" device_id)"
-set overthebox.me.token="$(otb_json_get "$content" token)"
+set overthebox.me.device_id=$(otb_json_get "$content" device_id)
+set overthebox.me.token=$(otb_json_get "$content" token)
 commit overthebox
 EOF
-
-exit 1

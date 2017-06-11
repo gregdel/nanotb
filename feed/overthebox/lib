@@ -1,5 +1,9 @@
 # vim: set ft=sh noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
+: ${OTB_DEVICE_ID:=$(uci -q get overthebox.me.device_id)}
+: ${OTB_TOKEN:=$(uci -q get overthebox.me.token)}
+: ${OTB_DEBUG:=$(uci -q get overthebox.me.debug)}
+
 otb_alert() {
 	logger -t otb -p 1 "$*" || true
 }
