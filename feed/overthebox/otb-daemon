@@ -15,7 +15,7 @@ while true; do
 	[ -n "${ret}" ] || exit
 
 	action=$(otb_json_get "$ret" action)
-	export ACTION_ID=$(otb_json_get "$ret" id)
+	id=$(otb_json_get "$ret" id)
 
 	# Check the action argument
 	if [ -z "$action" ]; then
@@ -23,13 +23,13 @@ while true; do
 		continue
 	fi
 
-	otb_debug "Calling $action with id $ACTION_ID"
+	otb_debug "Calling $action with id $id"
 
 	output="$(otb-action-"$action" "$ret" 2>&1)"
 	[ $? -eq 0 ] && action_status="done" || action_status="error"
 
-	if [ -z "$ACTION_ID" ] || [ "$ACTION_ID" = "null" ]; then
-		[ "$ACTION_ID" != "null" ] && \
+	if [ -z "$id" ] || [ "$id" = "null" ]; then
+		[ "$id" != "null" ] && \
 			otb_debug "Action without id, no need to confirm"
 		continue
 	fi
@@ -44,8 +44,6 @@ while true; do
 	fi
 
 	# shellcheck disable=SC2016
-	otb_debug "Action $action with id $ACTION_ID done with status $action_status"
-	otb_device_post "actions/$ACTION_ID" --data "$json_ret"
-
-	unset ACTION_ID
+	otb_debug "Action $action with id $id done with status $action_status"
+	otb_device_post "actions/$id" --data "$json_ret"
 done

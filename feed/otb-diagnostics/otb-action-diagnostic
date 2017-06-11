@@ -6,13 +6,15 @@
 BIN_PATH=/usr/share/otb/diagnostics.d
 cd "$BIN_PATH"
 
+id=$(otb_json_get "$1" id)
+
 # Get the diags from the arguments
 DIAGS=$(otb_json_get "$1" "arguments.diags[]?")
 # If no argument is given, fallback to the diag directory
 [ -z "$DIAGS" ] && DIAGS=$(find -type f -perm 755)
 
 # shellcheck disable=SC2016
-create_diag_data=$(jq -n -c --arg id "$ACTION_ID" '{ device_action_id: $id }')
+create_diag_data=$(jq -n -c --arg id "$id" '{ device_action_id: $id }')
 
 # Create a new empty diag
 diag_info=$(otb_device_post diagnostics --data "$create_diag_data")
