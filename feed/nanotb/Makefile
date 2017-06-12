@@ -7,7 +7,8 @@ PKG_RELEASE:=0
 include $(INCLUDE_DIR)/package.mk
 
 MY_DEPENDS := otb-remote otb-config otb-diagnostics otb-backup \
-	getopt tc iperf3 ss strace tcpdump-mini ip-full jq
+    TARGET_x86:python-swconfig-otb \
+    getopt tc iperf3 ss strace tcpdump-mini ip-full jq
 
 define Package/$(PKG_NAME)
 SECTION:=OVH
