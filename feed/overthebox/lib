@@ -1,6 +1,7 @@
 # vim: set ft=sh noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
 : ${OTB_DEVICE_ID:=$(uci -q get overthebox.me.device_id)}
+: ${OTB_SERVICE_ID:=$(uci -q get overthebox.me.service_id)}
 : ${OTB_TOKEN:=$(uci -q get overthebox.me.token)}
 : ${OTB_DEBUG:=$(uci -q get overthebox.me.debug)}
 
@@ -29,6 +30,7 @@ otb_info() {
 }
 
 otb_debug()  {
+	# shellcheck disable=SC2015
 	[ -n "$OTB_DEBUG" ] && logger -t otb -p 7 "$*" || true
 }
 
@@ -71,4 +73,16 @@ otb_device_get() {
 	subpath=$1
 	shift 1
 	otb_call GET "devices/$OTB_DEVICE_ID/$subpath" "$@"
+}
+
+otb_service_post() {
+	subpath=$1
+	shift 1
+	otb_device_post "service/$OTB_SERVICE_ID/$subpath" "$@"
+}
+
+otb_service_get() {
+	subpath=$1
+	shift 1
+	otb_device_get "service/$OTB_SERVICE_ID/$subpath" "$@"
 }

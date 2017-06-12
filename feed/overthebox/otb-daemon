@@ -6,7 +6,7 @@ otb-subscribe || exit
 . /lib/overthebox
 
 otb_info "Ready for some action!"
-export OTB_DEVICE_ID OTB_TOKEN OTB_DEBUG
+export OTB_DEVICE_ID OTB_TOKEN OTB_DEBUG OTB_SERVICE_ID
 
 while true; do
 	ret=$(otb_device_get actions)
@@ -18,13 +18,15 @@ while true; do
 	[ -z "$action" ] && continue
 
 	output=$(otb-action-"$action" "$ret" 2>&1) && status="done" || status="error"
-	otb_debug "Got status '$status'"
+	otb_debug "Got status '$status' for action '$action'"
 	[ -z "$id" ] || [ "$id" = "null" ] && continue
 
 	details=$(printf "Details:\n%s" "$output")
 
 	# shellcheck disable=SC2016
-	json_ret="$(jq -c -n --arg status "$action_status" --arg details "$details" \
+	json_ret="$(jq -c -n --arg status "$status" --arg details "$details" \
 		'{status: $status, details: $details}')"
 	otb_device_post "actions/$id" --data "$json_ret"
+
+	otb_debug "All done for action '$action'"
 done
