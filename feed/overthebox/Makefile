@@ -35,6 +35,8 @@ define Package/$(PKG_NAME)/install
 	touch $(1)/etc/config/$(PKG_NAME)
 	$(INSTALL_DIR) $(1)/lib
 	$(INSTALL_DATA) lib $(1)/lib/$(PKG_NAME)
+	$(INSTALL_DIR) $(1)/etc/hotplug.d/iface
+	$(INSTALL_BIN) hotplug-iface $(1)/etc/hotplug.d/iface/90-$(PKG_NAME)
 endef
 
 $(eval $(call BuildPackage,$(PKG_NAME)))

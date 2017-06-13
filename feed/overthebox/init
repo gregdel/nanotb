@@ -5,6 +5,12 @@ STOP=10
 
 USE_PROCD=1
 
+boot() {
+    . /lib/overthebox
+    otb_save_event boot
+    start "$@"
+}
+
 start_service() {
 	procd_open_instance
 	procd_set_param command /bin/otb-daemon
