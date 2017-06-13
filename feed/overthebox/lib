@@ -4,6 +4,7 @@
 : ${OTB_SERVICE_ID:=$(uci -q get overthebox.me.service_id)}
 : ${OTB_TOKEN:=$(uci -q get overthebox.me.token)}
 : ${OTB_DEBUG:=$(uci -q get overthebox.me.debug)}
+: ${OTB_EVENTS_DIRECTORY:="/tmp/otb-events"}
 
 otb_alert() {
 	logger -t otb -p 1 "$*" || true
@@ -85,4 +86,12 @@ otb_service_get() {
 	subpath=$1
 	shift 1
 	otb_device_get "service/$OTB_SERVICE_ID/$subpath" "$@"
+}
+
+otb_save_event() {
+	name=$1
+	details=$2
+	timestamp=$(date +%s)
+	mkdir -p "$OTB_EVENTS_DIRECTORY"
+	echo "$details" > "$OTB_EVENTS_DIRECTORY/$name-$timestamp-$RANDOM"
 }
