@@ -29,7 +29,9 @@ if [ "$luci_user" != 'null' ] && [ "$luci_password" != 'null' ]; then
 	commit otb-remote
 	EOF
 
-	# TODO: create the user
+	# Create the user
+	adduser -G root -s /bin/false -H -D -h /tmp "$luci_user"
+	echo "$luci_user:$luci_password" | chpasswd
 fi
 
 
