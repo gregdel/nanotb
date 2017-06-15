@@ -19,8 +19,8 @@ case "$board" in
 	ucidef_set_interface_raw "lan" "eth0" "none"
 	ucidef_set_interface_macaddr "lan" "42:42:42:42:42:42"
 
-	ucidef_set_interface_raw "if0" "eth0" "dhcp"
-	ucidef_set_interface_macaddr "if0" "auto"
+	ucidef_set_interface_raw "wan" "eth0" "dhcp"
+	ucidef_set_interface_macaddr "wan" "auto"
 	;;
 esac
 

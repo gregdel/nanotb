@@ -2,7 +2,7 @@
 # vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
 [ -z "$router" ] && exit 0
-[ "$INTERFACE" = if0 ] || exit 0
+[ "$INTERFACE" = wan ] || exit 0
 
 case "$1" in
 renew|bound)
@@ -12,8 +12,8 @@ renew|bound)
 	;;
 esac
 
-_macaddr=$(cat /sys/class/net/if0/address)
-_ifname=$(uci -q get network.if0_dev.ifname)
+_macaddr=$(cat /sys/class/net/wan/address)
+_ifname=$(uci -q get network.wan_dev.ifname)
 
 KNOWN_ROUTER=$(uci show network | grep '\.gateway=' | grep -v '@route' | grep "'$router'")
 
@@ -25,7 +25,7 @@ if [ -z "$KNOWN_ROUTER" ]; then
 		set network.lan.ipaddr=$ip
 		set network.lan.netmask=$subnet
 		set network.lan_dev.macaddr=$_macaddr
-		set network.if0_dev.macaddr=auto.lan
+		set network.wan_dev.macaddr=auto.lan
 		commit network
 		EOF
 	else
@@ -48,7 +48,7 @@ if [ -z "$KNOWN_ROUTER" ]; then
 		set network.if${_id}.gateway=$router
 		set network.if${_id}.dns=$dns
 		set network.if${_id}.metric=$_id
-		set network.if0_dev.macaddr=auto.if$_id
+		set network.wan_dev.macaddr=auto.if$_id
 		add_list firewall.@zone[1].network=if$_id
 		commit network
 		commit firewall
