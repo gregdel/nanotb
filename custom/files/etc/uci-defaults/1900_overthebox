@@ -1,5 +1,6 @@
 #!/bin/sh
 
+# shellcheck disable=SC1091
 . /lib/functions/network.sh
 
 uci -q batch <<EOF

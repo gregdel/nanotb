@@ -1,10 +1,11 @@
 #!/bin/sh
 # vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
 
+# shellcheck disable=SC1091
 . /lib/overthebox
 
 BIN_PATH=/usr/share/otb/diagnostics.d
-cd "$BIN_PATH"
+cd "$BIN_PATH" || exit 1
 
 id=$(otb_json_get "$1" id)
 
@@ -42,5 +43,3 @@ for diag in $DIAGS; do
 	otb_device_post "diagnostics/$diag_id" --data "$post_data"
 	echo
 done
-
-echo "$combined_outputs"

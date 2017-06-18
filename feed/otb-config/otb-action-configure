@@ -3,6 +3,7 @@
 
 set -e
 
+# shellcheck disable=SC1091
 . /lib/overthebox
 
 config=$(otb_device_get config)

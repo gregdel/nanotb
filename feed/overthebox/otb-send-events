@@ -3,6 +3,7 @@
 
 set -e
 
+# shellcheck disable=SC1091
 . /lib/overthebox
 
 for file_path in $OTB_EVENTS_DIRECTORY/*; do

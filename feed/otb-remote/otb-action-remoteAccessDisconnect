@@ -3,6 +3,7 @@
 
 set -e
 
+# shellcheck disable=SC1091
 . /lib/overthebox
 
 remote_access_id="$(otb_json_get "$1" 'arguments.remote_access_id')"

@@ -3,12 +3,14 @@
 
 set -e
 
+# shellcheck disable=SC1091
 . /lib/overthebox
 
 [ -n "${OTB_TOKEN}" ] && [ -n "${OTB_DEVICE_ID}" ] && exit
 
 otb_info "Subscribing to the overthebox service..."
 
+# shellcheck disable=SC1091
 . /lib/functions/network.sh
 
 lan_ip=
