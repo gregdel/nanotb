@@ -1,5 +1,7 @@
 machine:
     timezone: Europe/Paris
+    environment:
+        OTB_REPO: http://213.32.73.166:8000/nanotb
 
 dependencies:
     override:
@@ -18,4 +20,4 @@ deployment:
     dev:
         branch: master
         commands:
-            - rsync -avh source/bin/ deploy@213.32.73.166:dist/
+            - rsync -avh source/bin/ deploy@213.32.73.166:dist/nanotb/
