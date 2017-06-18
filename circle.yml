@@ -15,6 +15,7 @@ compile:
 
 test:
     override:
+        - "true"
 
 deployment:
     dev:
