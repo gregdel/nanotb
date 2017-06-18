@@ -3,6 +3,7 @@
 
 otb-subscribe || exit
 
+# shellcheck disable=SC1091
 . /lib/overthebox
 
 otb_info "Ready for some action!"
