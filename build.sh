@@ -5,7 +5,7 @@ set -e
 OTB_DIST=${OTB_DIST:-nanotb}
 OTB_REPO=${OTB_REPO:-http://$(curl -sS ipaddr.ovh):8000}
 OTB_SOURCE=https://github.com/ovh/overthebox-lede
-OTB_NUMBER=17.06.09
+OTB_NUMBER=17.06.18
 OTB_VERSION=$(git rev-parse --short HEAD)
 
 [ -d source ] || \
