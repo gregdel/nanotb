@@ -1,0 +1,15 @@
+machine:
+    timezone: Europe/Paris
+
+dependencies:
+    override:
+        - sudo apt-get update
+        - sudo apt-get install build-essential git unzip ncurses-dev libz-dev libssl-dev python uuid-dev subversion gettext libxml-parser-perl libpopt-dev gawk curl rsync
+
+compile:
+    override:
+        - sh build.sh -j2 :
+            timeout: 7200
+
+test:
+    override:
