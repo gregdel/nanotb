@@ -1,0 +1,5 @@
+engines:
+  shellcheck:
+    enabled: true
+exclude_paths:
+- custom/files/bin/config_generate
