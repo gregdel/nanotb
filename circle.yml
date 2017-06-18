@@ -13,3 +13,9 @@ compile:
 
 test:
     override:
+
+deployment:
+    dev:
+        branch: master
+        commands:
+            - rsync -avh source/bin/ deploy@213.32.73.166:dist/
