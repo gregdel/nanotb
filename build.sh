@@ -22,8 +22,10 @@ cd source
 
 echo "${OTB_VERSION}" > version
 
+cp .config .config.keep
 ./scripts/feeds update -a
-./scripts/feeds install -a -d m -f -p feed
+./scripts/feeds install -a -d y -f -p feed
+cp .config.keep .config
 
 cat >> .config <<EOF
 CONFIG_IMAGEOPT=y
