@@ -1,0 +1,4 @@
+#!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
+[ -z "$SIMPLETRACKER_INTERFACE_STATE" ] && exit 0
+logger -t "log_state" "$SIMPLETRACKER_INTERFACE is $SIMPLETRACKER_INTERFACE_STATE"

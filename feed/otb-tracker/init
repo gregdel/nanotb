@@ -1,0 +1,58 @@
+#!/bin/sh /etc/rc.common
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
+START=90
+STOP=10
+
+USE_PROCD=1
+
+validate_track_dns_section() {
+	uci_validate_section otb-tracker dns-track "$1" \
+		'host:host' \
+		'interface:string' \
+		'timeout:uinteger:2' \
+		'domain:host'
+}
+
+validate_track_section() {
+	uci_validate_section otb-tracker track "$1" \
+		'host:host' \
+		'interface:string' \
+		'timeout:uinteger:2'
+}
+
+start_track_icmp() {
+	validate_track_section "$1" || return
+	start_track "icmp"
+}
+
+start_track_udp_dns() {
+	validate_track_dns_section "$1" || return
+	start_track "udp_dns"
+}
+
+start_track_tcp_curl(){
+	validate_track_dns_section "$1" || return
+	start_track "tcp_curl"
+}
+
+#1 method
+start_track() {
+	procd_open_instance
+	procd_set_param command /bin/otb-tracker \
+		-m "$1" \
+		-t "$timeout" \
+		-h "$host" \
+		-d "$domain" \
+		"$interface"
+	procd_set_param respawn  0 5 0
+	procd_set_param stderr 1
+	procd_set_param stdout 1
+	procd_close_instance
+}
+
+start_service() {
+	config_load otb-tracker
+	config_foreach start_track_icmp icmp
+	config_foreach start_track_udp_dns udp_dns
+	config_foreach start_track_tcp_curl tcp_curl
+}

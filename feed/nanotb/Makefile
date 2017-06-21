@@ -6,7 +6,7 @@ PKG_RELEASE:=0
 
 include $(INCLUDE_DIR)/package.mk
 
-MY_DEPENDS := otb-remote otb-config otb-diagnostics otb-backup \
+MY_DEPENDS := otb-remote otb-config otb-diagnostics otb-backup otb-tracker \
     TARGET_x86:python-swconfig-otb iptables-mod-trace \
     getopt tc iperf3 ss strace tcpdump-mini ip-full
 

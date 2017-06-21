@@ -1,0 +1,71 @@
+#!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
+
+. /lib/functions/network.sh
+
+: "${SIMPLETRACKER_INTERFACE_STATE:=}"
+: "${SIMPLETRACKER_INTERFACE_PUBLIC_IP:=}"
+: "${SIMPLETRACKER_INTERFACE_LATENCY:=}"
+
+# list available tracking methods
+available_methods() {
+	echo "icmp" "tcp_dns" "udp_dns" "tcp_curl"
+}
+
+_get_interface_ip() {
+	network_flush_cache
+	network_get_ipaddrs interface_ip "$SIMPLETRACKER_INTERFACE"
+}
+
+track_state() {
+	network_flush_cache
+	network_is_up "$SIMPLETRACKER_INTERFACE" && SIMPLETRACKER_INTERFACE_STATE="UP"
+}
+
+track_icmp() {
+	result=$( ping \
+		-c 1 \
+		-I "$SIMPLETRACKER_INTERFACE" \
+		-W "$SIMPLETRACKER_TIMEOUT" \
+		"$SIMPLETRACKER_HOST" 2>&1 )
+	[ "$?" = 0 ] && SIMPLETRACKER_INTERFACE_LATENCY=$( echo "$result" | cut -d '/' -s -f4)
+}
+
+track_tcp_curl(){
+	SIMPLETRACKER_INTERFACE_PUBLIC_IP=$( curl \
+		--interface "$SIMPLETRACKER_INTERFACE" \
+		--max-time "$SIMPLETRACKER_TIMEOUT" \
+		--silent \
+		"$SIMPLETRACKER_HOST" )
+}
+
+_extract_pub_ip() {
+	echo "$1"
+}
+
+_extract_latency() {
+	echo "$6"
+}
+
+track_tcp_dns() {
+	_track_dns "+tcp"
+}
+
+track_udp_dns() {
+	_track_dns
+}
+
+#@ command
+_track_dns() {
+	_get_interface_ip
+	for i in $interface_ip; do
+		response="$( dig -b "$i" "$SIMPLETRACKER_DOMAIN" @"$SIMPLETRACKER_HOST" +time="$SIMPLETRACKER_TIMEOUT" +short +identify "$@")"
+		if [ $? = 0 ] ; then
+			# shellcheck disable=SC2086
+			SIMPLETRACKER_INTERFACE_PUBLIC_IP=$( _extract_pub_ip $response )
+			# shellcheck disable=SC2086
+			SIMPLETRACKER_INTERFACE_LATENCY=$( _extract_latency $response )
+			break
+		fi
+	done
+}

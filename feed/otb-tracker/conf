@@ -1,0 +1,33 @@
+
+config icmp 'icmp1'
+	option host '8.8.8.8'
+	option timeout '2'
+	option interface 'if1'
+
+config icmp 'icmp2'
+	option host '8.8.8.8'
+	option timeout '2'
+	option interface 'if2'
+
+config udp_dns 'dns1'
+	option host '51.254.49.133'
+	option timeout '2'
+	option interface 'if1'
+	option domain 'tracker.overthebox.ovh'
+
+config udp_dns 'dns2'
+	option host '51.254.49.132'
+	option timeout '2'
+	option interface 'if2'
+	option domain 'tracker.overthebox.ovh'
+
+config tcp_curl 'curl1'
+	option host 'ipaddr.ovh'
+	option timeout '2'
+	option interface 'if1'
+
+config tcp_curl 'curl2'
+	option host 'ipaddr.ovh'
+	option timeout '2'
+	option interface 'if2'
+

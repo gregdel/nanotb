@@ -1,0 +1,4 @@
+#!/bin/sh
+# vim: set noexpandtab tabstop=4 shiftwidth=4 softtabstop=4 :
+[ "$SIMPLETRACKER_INTERFACE_STATE" = "UP" ] && exit 0
+logger -t "alerting" "$SIMPLETRACKER_INTERFACE is dead"
