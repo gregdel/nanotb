@@ -2,6 +2,8 @@
 
 set -e
 
+git fetch --all || true
+
 OTB_NUMBER=$(git describe --tag --always)
 
 OTB_SRC=${OTB_SRC:-17.06.18}
