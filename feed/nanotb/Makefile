@@ -6,7 +6,7 @@ PKG_RELEASE:=0
 
 include $(INCLUDE_DIR)/package.mk
 
-MY_DEPENDS := $(wildcard otb-*) \
+MY_DEPENDS := $(notdir $(wildcard ../otb-*)) \
     iptables-mod-trace getopt tc iperf3 ss strace tcpdump-mini ip-full
 
 define Package/$(PKG_NAME)
