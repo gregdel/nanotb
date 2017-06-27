@@ -67,6 +67,9 @@ generate_network() {
 
 	[ -n "$ifname" ] || return
 
+	# hack (see /etc/board.d/02_network)
+	[ "$ifname" = none ] && return
+
 	if [ -n "$macaddr" ]; then
 		type=macvlan # useless, only for legacy
 		uci -q batch <<-EOF
@@ -227,7 +230,7 @@ generate_static_system() {
 	uci -q batch <<-EOF
 		delete system.@system[0]
 		add system system
-		set system.@system[-1].hostname='LEDE'
+		set system.@system[-1].hostname='nanOTB'
 		set system.@system[-1].timezone='UTC'
 		set system.@system[-1].ttylogin='0'
 		set system.@system[-1].log_size='64'

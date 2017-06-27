@@ -17,9 +17,6 @@ _setup() {
 		add_list firewall.@zone[1].network=$1
 		EOF
 		;;
-	none) # hack (see /etc/board.d/02_network)
-		uci -q delete "network.$1"
-		;;
 	*tun*)
 		uci -q batch <<-EOF
 		set network.$1.multipath=off
@@ -27,9 +24,10 @@ _setup() {
 		EOF
 		;;
 	*)
-		uci -q batch <<-EOF
-		set network.$1.multipath=off
-		EOF
+		uci -q get "network.$1.multipath" > /dev/null || \
+			uci -q batch <<-EOF
+			set network.$1.multipath=off
+			EOF
 		;;
 	esac
 }

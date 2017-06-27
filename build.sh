@@ -2,45 +2,69 @@
 
 set -e
 
+unset GREP_OPTIONS SED
+
 git fetch --all || true
 
-OTB_NUMBER=$(git describe --tag --always)
+_get_repo() {
+	git clone "$2" "$1" 2>/dev/null || true
+	git -C "$1" remote set-url origin "$2"
+	git -C "$1" fetch --all
+	git -C "$1" checkout "origin/$3" -B "$3"
+}
 
-OTB_SRC=${OTB_SRC:-17.06.18}
-OTB_REPO=${OTB_REPO:-http://$(curl -sS ipaddr.ovh):8000}
-OTB_DIST=nanotb
+OTB_DIST=${OTB_DIST:-nanotb}
+OTB_REPO=${OTB_REPO:-http://$OTB_HOST:$OTB_PORT/$OTB_PATH}
 
-git clone https://github.com/ovh/overthebox-lede source || true
-git -C source fetch --all
-git -C source checkout "origin/otb-$OTB_SRC" -B "otb-$OTB_SRC"
+_get_repo source https://github.com/ovh/overthebox-lede "otb-17.06.25"
+_get_repo feeds/packages https://github.com/openwrt/packages "lede-17.01"
 
-echo "$OTB_SRC" > source/version
+if [ -n "$1" ] && [ -f "$OTB_FEED/$1/Makefile" ]; then
+	OTB_DIST=$1
+	shift 1
+fi
 
-rsync -avh custom/ source/
+rm -rf source/files
+cp -rf root source/files
+
+cat >> source/files/etc/banner <<EOF
+-----------------------------------------------------
+ PACKAGE:     $OTB_DIST
+ VERSION:     $(git describe --tag --always)
+
+ BUILD REPO:  $(git remote get-url origin)
+ BUILD DATE:  $(date -u)
+-----------------------------------------------------
+EOF
 
 cat > source/feeds.conf <<EOF
-src-git packages https://git.lede-project.org/feed/packages.git;lede-17.01
-src-git luci https://github.com/openwrt/luci.git;for-15.05
+src-link packages $(readlink -f feeds/packages)
 src-link feed $(readlink -f feed)
 EOF
 
-cat >> source/.config <<EOF
+cat config -> source/.config <<EOF
 CONFIG_IMAGEOPT=y
 CONFIG_VERSIONOPT=y
 CONFIG_VERSION_DIST="$OTB_DIST"
 CONFIG_VERSION_REPO="$OTB_REPO"
-CONFIG_VERSION_NUMBER="$OTB_NUMBER"
+CONFIG_VERSION_NUMBER="$(git describe --tag --always)"
+CONFIG_VERSION_CODE=""
 CONFIG_PACKAGE_$OTB_DIST=y
 EOF
 
+echo "Building $OTB_CODE"
+
 cd source
 
-echo "Building $(cat version)"
-
 cp .config .config.keep
+scripts/feeds clean
 scripts/feeds update -a
 scripts/feeds install -a -d y -f -p feed
 cp .config.keep .config
 
 make defconfig
-make "$@"
+
+make "$@" || {
+	make clean
+	make "$@"
+}
