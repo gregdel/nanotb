@@ -16,7 +16,7 @@ _get_repo() {
 OTB_DIST=${OTB_DIST:-nanotb}
 OTB_REPO=${OTB_REPO:-http://$OTB_HOST:$OTB_PORT/$OTB_PATH}
 
-_get_repo source https://github.com/ovh/overthebox-lede "otb-17.06.25"
+_get_repo source https://github.com/ovh/overthebox-lede "otb-17.06.28"
 _get_repo feeds/packages https://github.com/openwrt/packages "lede-17.01"
 
 if [ -n "$1" ] && [ -f "$OTB_FEED/$1/Makefile" ]; then
